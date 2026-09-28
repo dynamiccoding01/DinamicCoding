@@ -1,26 +1,240 @@
 @import "tailwindcss";
 
+/*
+  Dynamic Coding — tema híbrido
+  Cuerpo claro y minimalista + hero/footer oscuros (Aurora) como acento.
+  Paleta basada en el logo (azules) + acentos cyan/violeta.
+*/
+@theme {
+  --color-brand-50:  #eff6ff;
+  --color-brand-100: #dbeafe;
+  --color-brand-200: #bfdbfe;
+  --color-brand-300: #93c5fd;
+  --color-brand-400: #60a5fa;
+  --color-brand-500: #2f8ad9;
+  --color-brand-600: #1c56ad;
+  --color-brand-700: #16468c;
+  --color-brand-800: #123a6e;
+  --color-brand-900: #0a2140;
+
+  --color-navy: #123a6e;
+  --color-navy-deep: #0a2140;
+  --color-cyan: #38d6f5;
+  --color-violet: #7c6cff;
+
+  /* Superficie / tinta (tema CLARO) */
+  --color-ink: #0f1c2e;
+  --color-ink-soft: #3a4658;
+  --color-muted: #64748b;
+  --color-line: rgba(15, 28, 46, 0.10);
+  --color-surface: #ffffff;
+  --color-surface-soft: #f5f8fc;
+  --color-panel: #ffffff;
+
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-archivo);
+  --font-mono: var(--font-jbmono);
+
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
+}
+
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #0f1c2e;
+  color-scheme: light;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+html { scroll-behavior: smooth; }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, -apple-system, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--color-brand-500) 25%, transparent);
+  color: var(--color-ink);
+}
+
+* { scrollbar-color: rgba(15, 28, 46, 0.25) transparent; }
+
+/* ---------- Aurora (solo dentro de secciones oscuras: hero/footer) ---------- */
+.aurora {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.aurora .blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.55;
+  will-change: transform;
+}
+.aurora .b1 { width: 44vw; height: 44vw; background: var(--color-brand-500); top: -16vw; left: -8vw; animation: drift 20s ease-in-out infinite; }
+.aurora .b2 { width: 40vw; height: 40vw; background: var(--color-violet); top: -10vw; right: -8vw; animation: drift 26s ease-in-out infinite reverse; }
+.aurora .b3 { width: 38vw; height: 38vw; background: var(--color-cyan); bottom: -20vw; left: 40%; opacity: 0.35; animation: drift 23s ease-in-out infinite; }
+
+@keyframes drift {
+  0%   { transform: translate(0, 0) scale(1); }
+  33%  { transform: translate(6%, -5%) scale(1.12); }
+  66%  { transform: translate(-5%, 6%) scale(0.92); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+/* ---------- Tarjetas ---------- */
+/* Glass claro: tarjeta blanca limpia con sombra sutil (cuerpo del sitio) */
+.glass {
+  background: #ffffff;
+  border: 1px solid var(--color-line);
+  box-shadow: 0 1px 2px rgba(15, 28, 46, 0.04), 0 12px 28px -20px rgba(15, 28, 46, 0.28);
+}
+/* Glass oscuro: para superficies oscuras (hero / footer) */
+.glass-dark {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Texto con degradado animado — versión CLARA (legible sobre blanco) */
+.grad-text {
+  background: linear-gradient(100deg, var(--color-brand-600), var(--color-brand-500) 45%, var(--color-violet));
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gshift 6s ease-in-out infinite;
+}
+/* Versión BRILLANTE — para fondos oscuros (hero/footer) */
+.grad-text-bright {
+  background: linear-gradient(100deg, var(--color-cyan), var(--color-brand-400) 35%, #ffffff 55%, var(--color-violet));
+  background-size: 220% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gshift 6s ease-in-out infinite;
+}
+@keyframes gshift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Brillo animado para botones sobre fondo oscuro */
+.btn-sheen { position: relative; overflow: hidden; }
+.btn-sheen::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 40%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+  transform: translateX(-120%);
+  animation: sheen 3.6s ease-in-out infinite;
+}
+@keyframes sheen {
+  from { transform: translateX(-120%); }
+  to   { transform: translateX(240%); }
+}
+
+/* Spotlight que sigue el cursor (hero oscuro) */
+.spot { position: relative; }
+.spot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(340px 260px at var(--mx, 50%) var(--my, 30%), color-mix(in srgb, var(--color-cyan) 18%, transparent), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.35s;
+  pointer-events: none;
+}
+.spot[data-active="true"]::after { opacity: 1; }
+
+/* Elevación sutil al pasar el cursor por tarjetas del cuerpo */
+.card-glow { position: relative; }
+.card-glow::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(240px 180px at var(--mx, 50%) var(--my, 50%), color-mix(in srgb, var(--color-brand-500) 8%, transparent), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+.card-glow:hover::after { opacity: 1; }
+
+/* Marquee (carrusel infinito) del stack */
+.marquee {
+  display: flex;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.marquee__track {
+  display: flex;
+  flex-shrink: 0;
+  gap: 14px;
+  padding-right: 14px;
+  animation: marquee-x 34s linear infinite;
+  will-change: transform;
+}
+.marquee--reverse .marquee__track { animation-direction: reverse; }
+.marquee:hover .marquee__track { animation-play-state: paused; }
+@keyframes marquee-x {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* Punto "en vivo" con pulso */
+.live-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--color-cyan);
+  animation: pulse-dot 2s infinite;
+}
+@keyframes pulse-dot {
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-cyan) 55%, transparent); }
+  50%      { box-shadow: 0 0 0 6px transparent; }
+}
+
+/* Acordeón FAQ */
+.faq-chevron { transition: transform 0.25s ease; }
+details[open] .faq-chevron { transform: rotate(180deg); }
+summary::-webkit-details-marker { display: none; }
+summary { list-style: none; }
+
+/* Rejilla decorativa — líneas oscuras (superficies claras) */
+.bg-grid {
+  background-image:
+    linear-gradient(to right, rgba(15, 28, 46, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(15, 28, 46, 0.04) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+/* Rejilla — líneas claras (superficies oscuras: hero) */
+.bg-grid-on-dark {
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+/* Aparición al hacer scroll (componente <Reveal/>) */
+@keyframes reveal-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.reveal { opacity: 0; }
+.reveal.is-visible { opacity: 1; animation: reveal-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .reveal, .reveal.is-visible { opacity: 1; animation: none; }
+  .aurora .blob, .grad-text, .grad-text-bright, .btn-sheen::after, .live-dot, .marquee__track { animation: none; }
 }

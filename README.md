@@ -1,36 +1,82 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Dynamic Coding — Sitio público
 
-## Getting Started
+Landing page de la consultora y desarrolladora de software **Dynamic Coding**.
+Muestra los servicios, el portafolio de proyectos y los perfiles del equipo, e
+incluye un formulario de consulta para clientes.
 
-First, run the development server:
+## Stack
+
+- **Next.js 16** (App Router) + **React 19** + **TypeScript**
+- **Tailwind CSS v4**
+- **Supabase** (PostgreSQL) para datos y recepción de consultas
+- **lucide-react** para íconos
+- Deploy recomendado: **Vercel**
+
+## Arquitectura de dos proyectos
+
+Este repo es el **sitio público** (visibilidad y consulta):
+
+- **Lee** de Supabase: `projects` y `team_members`.
+- **Escribe** en Supabase: inserta en `inquiries` cuando un cliente envía el
+  formulario de contacto.
+- **No** administra contenido.
+
+La **administración** (agregar/editar proyectos y equipo, kardex, movimientos,
+listado de consultas) vive en un **proyecto aparte** que comparte la misma base
+de datos Supabase.
+
+## Empezar
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abre http://localhost:3000. Sin configurar Supabase, el sitio funciona en
+**modo demo** con los datos de ejemplo de `src/lib/seed.ts`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Conectar Supabase
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Crea un proyecto en [supabase.com](https://supabase.com).
+2. En **SQL Editor**, ejecuta `supabase/schema.sql` (tablas + RLS) y, si quieres
+   los datos de ejemplo, luego `supabase/seed.sql`.
+3. Copia `.env.local.example` a `.env.local` y completa con
+   **Project Settings → API**:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+4. Reinicia `npm run dev`. El sitio pasará a leer/escribir en Supabase
+   automáticamente.
 
-## Learn More
+### Seguridad (RLS)
 
-To learn more about Next.js, take a look at the following resources:
+- Lectura pública de `projects` y `team_members`.
+- Inserción pública en `inquiries`, pero **nadie** puede leerlas de forma
+  anónima (solo el panel admin con `service_role`).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Estructura
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+src/
+  app/
+    page.tsx                # Inicio (hero, servicios, proyectos, equipo, CTA)
+    proyectos/              # Vitrina + detalle [slug]
+    equipo/                 # Grilla + perfil [slug]
+    contacto/               # Formulario de consulta
+  components/               # UI, secciones, layout, tarjetas, formulario
+  lib/
+    data.ts                 # Acceso a datos (Supabase o demo)
+    seed.ts                 # Datos de ejemplo (modo demo)
+    types.ts                # Tipos de dominio
+    actions.ts              # Server Action del formulario
+    supabase/client.ts      # Cliente de Supabase
+supabase/
+  schema.sql                # Tablas + RLS
+  seed.sql                  # Datos de ejemplo (opcional)
+```
 
-## Deploy on Vercel
+## Scripts
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `npm run dev` — desarrollo
+- `npm run build` — build de producción
+- `npm run start` — servir el build
+- `npm run lint` — ESLint
