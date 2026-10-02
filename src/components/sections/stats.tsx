@@ -16,15 +16,13 @@ function useCountUp(target: number, run: boolean, duration = 1200) {
   const [n, setN] = useState(0);
   useEffect(() => {
     if (!run) return;
-    if (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setN(target);
-      return;
-    }
+    // Con movimiento reducido, el primer frame ya muestra el valor final.
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let raf = 0;
     let start: number | null = null;
     const step = (t: number) => {
       if (start === null) start = t;
-      const p = Math.min((t - start) / duration, 1);
+      const p = reduced ? 1 : Math.min((t - start) / duration, 1);
       const eased = 1 - Math.pow(1 - p, 3);
       setN(Math.round(target * eased));
       if (p < 1) raf = requestAnimationFrame(step);
@@ -57,9 +55,10 @@ export function Stats() {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+    // También cubre navegadores sin IntersectionObserver.
+    const fallback = window.setTimeout(() => setRun(true), 1000);
     if (typeof IntersectionObserver === "undefined") {
-      setRun(true);
-      return;
+      return () => window.clearTimeout(fallback);
     }
     const obs = new IntersectionObserver(
       ([e]) => {
@@ -71,7 +70,6 @@ export function Stats() {
       { threshold: 0.3 },
     );
     obs.observe(el);
-    const fallback = window.setTimeout(() => setRun(true), 1000);
     return () => {
       obs.disconnect();
       window.clearTimeout(fallback);

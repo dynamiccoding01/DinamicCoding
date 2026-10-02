@@ -9,6 +9,9 @@ import { Avatar } from "@/components/ui/avatar";
 import { SocialLinks } from "@/components/team/social-links";
 import { getTeam, getTeamMemberBySlug } from "@/lib/data";
 
+// Los datos vienen de Supabase: se regenera como máximo cada 60 s.
+export const revalidate = 60;
+
 type Params = { slug: string };
 
 export async function generateStaticParams() {
@@ -43,7 +46,7 @@ export default async function TeamMemberPage({
         <Container className="py-10 sm:py-14">
           <Link
             href="/equipo"
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-muted transition-colors hover:text-cyan"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-muted transition-colors hover:text-brand-600"
           >
             <ArrowLeft size={16} />
             Volver al equipo
@@ -54,13 +57,13 @@ export default async function TeamMemberPage({
               name={member.name}
               src={member.avatar_url}
               size={128}
-              className="ring-4 ring-white/10"
+              className="ring-4 ring-brand-50"
             />
             <div>
               <h1 className="font-display text-3xl font-extrabold tracking-tight text-ink sm:text-4xl">
                 {member.name}
               </h1>
-              <p className="mt-1 text-lg font-medium text-cyan">{member.role}</p>
+              <p className="mt-1 text-lg font-medium text-brand-600">{member.role}</p>
               <p className="mt-3 max-w-xl text-pretty text-muted">
                 {member.headline}
               </p>
@@ -121,7 +124,7 @@ export default async function TeamMemberPage({
 
             <div className="mt-6 rounded-2xl border border-cyan/20 bg-cyan/5 p-6">
               <div className="flex items-start gap-3">
-                <CheckCircle2 size={20} className="mt-0.5 shrink-0 text-cyan" />
+                <CheckCircle2 size={20} className="mt-0.5 shrink-0 text-brand-600" />
                 <p className="text-sm leading-relaxed text-ink-soft">
                   Disponible para colaborar en nuevos proyectos con Dynamic Coding.
                 </p>

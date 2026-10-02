@@ -9,11 +9,11 @@ const socialClass =
 
 const quickLinks = [
   { label: "Inicio", href: "/" },
-  { label: "Quiénes somos", href: "/#servicios" },
+  { label: "Quiénes somos", href: "/#nosotros" },
+  { label: "Servicios", href: "/#servicios" },
   { label: "Proyectos", href: "/proyectos" },
   { label: "Equipo", href: "/equipo" },
   { label: "Contacto", href: "/contacto" },
-  { label: "Zona Admin", href: "/admin" },
 ];
 
 const serviceGroups = [
@@ -112,12 +112,9 @@ export function Footer() {
         </div>
 
         {/* Barra inferior */}
-        <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 text-sm text-slate-500 sm:flex-row">
+        {/* TODO: volver a enlazar /terminos y /privacidad cuando existan esas páginas. */}
+        <div className="mt-14 border-t border-white/10 pt-6 text-center text-sm text-slate-500 sm:text-left">
           <p>© {year} Dynamic Coding. Todos los derechos reservados.</p>
-          <div className="flex gap-6">
-            <Link href="/terminos" className="hover:text-cyan">Términos y Condiciones</Link>
-            <Link href="/privacidad" className="hover:text-cyan">Política de Privacidad</Link>
-          </div>
         </div>
       </Container>
     </footer>

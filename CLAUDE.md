@@ -46,26 +46,43 @@ Cambiar una tabla afecta a ambos proyectos.
 - Escritura: Server Action `submitInquiry` en `src/lib/actions.ts`, usada con
   `useActionState` en `src/components/contact/contact-form.tsx`. Valida en el
   servidor, tiene un honeypot (`website`) y devuelve `status: "demo"` si no hay
-  Supabase.
+  Supabase. Si hay error devuelve `values` y el form los repone vía
+  `defaultValue` (React 19 vacía el form tras cada acción; el `<select>`
+  además necesita `key` para remontarse).
+- Límites de las consultas: `src/lib/inquiry.ts` (servidor + `maxLength`) debe
+  coincidir con los CHECK de `inquiries` en `supabase/schema.sql`. Un trigger
+  (`private.inquiries_rate_limit`) limita la frecuencia de envíos y responde
+  con el código `PT429`, que `actions.ts` traduce a un mensaje amable.
 - Mantener sincronizados: `src/lib/types.ts` ↔ `src/lib/seed.ts` ↔
   `supabase/schema.sql` (tablas + RLS) ↔ `supabase/seed.sql`.
 - RLS: lectura pública de `projects`/`team_members`; solo INSERT anónimo en
   `inquiries` (nunca SELECT anónimo).
-- Todas las rutas se prerenderizan en el build (las `[slug]` vía
-  `generateStaticParams`) y no hay estrategia de revalidación
-  (`cacheComponents` desactivado, sin `revalidate`): lo que se edite desde el
-  admin no aparece hasta un nuevo build.
-- `@supabase/ssr` está instalado pero no se usa (el sitio no tiene auth).
-- `next.config.ts` permite imágenes remotas de cualquier host `https`
-  (pensado para Supabase Storage).
+- Las páginas con datos (y `sitemap.ts`) se prerenderizan en el build y se
+  regeneran con ISR (`export const revalidate = 60`; `cacheComponents`
+  desactivado). Una página nueva que lea de `data.ts` debe exportar lo mismo.
+  Si Supabase está conectado pero las tablas están vacías, el sitio se ve
+  vacío (el fallback al demo es solo para cliente nulo o error).
+- `next.config.ts` solo admite imágenes remotas de
+  `<NEXT_PUBLIC_SUPABASE_URL>/storage/v1/object/public/**`; cualquier otra URL
+  externa en `cover_image`/`avatar_url` no se mostrará. Imágenes locales en
+  `public/images`.
 
 ### Variables de entorno
 
-`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` (sin ellas → modo
-demo) y `NEXT_PUBLIC_SITE_URL` (`metadataBase` y `sitemap.ts`; por defecto
-`https://dynamiccoding.dev`). Plantilla versionada en `.env.local.example`
+`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` (clave
+publishable/anon; sin ellas → modo demo) y, opcional, `NEXT_PUBLIC_SITE_URL`.
+La URL pública del sitio sale de `src/lib/site.ts` (esa variable →
+`VERCEL_PROJECT_PRODUCTION_URL` → localhost) y la usan `metadataBase`,
+`sitemap.ts` y `robots.ts`. Plantilla versionada en `.env.local.example`
 (excepción `!.env.local.example` en el `.gitignore`; el resto de `.env*` se
 ignora).
+
+## Deploy
+
+Vercel (proyecto conectado al repo `dynamiccoding01/DinamicCoding`): cada push
+a `main` publica en producción (https://dinamic-coding.vercel.app) y cada
+rama/PR genera un preview. Las variables `NEXT_PUBLIC_*` se fijan en el build:
+tras cambiarlas en Vercel hay que hacer Redeploy.
 
 ## UI y estilos
 
@@ -86,6 +103,10 @@ ignora).
 - `<Reveal>` (`src/components/ui/reveal.tsx`): `.reveal.is-visible` debe
   mantener `opacity: 1` explícito (no solo vía la animación) y el fallback de
   800 ms, o el contenido queda invisible en pestañas en segundo plano.
+- ESLint incluye `react-hooks/set-state-in-effect`: no llamar `setState` de
+  forma síncrona dentro de un `useEffect` (usar callbacks, timers o rAF).
+- En superficies claras no usar `text-cyan` para texto (contraste ~1.7:1):
+  usar `text-brand-600`. `cyan` es para el hero/footer oscuros.
 - lucide-react v1.x no trae logos de marca: GitHub/LinkedIn/X están en
   `src/components/ui/brand-icons.tsx`.
 - Server Components por defecto; solo son cliente `contact-form`, `navbar`,

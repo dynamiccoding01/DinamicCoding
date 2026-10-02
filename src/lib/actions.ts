@@ -1,11 +1,17 @@
 "use server";
 
 import { getSupabase } from "./supabase/client";
+import { INQUIRY_LIMITS, type InquiryField } from "./inquiry";
 
 export type ContactState = {
   status: "idle" | "success" | "error" | "demo";
   message?: string;
-  errors?: Partial<Record<"name" | "email" | "message", string>>;
+  errors?: Partial<Record<InquiryField, string>>;
+  /**
+   * Lo que envió el usuario. React 19 vacía el formulario al terminar la
+   * acción, así que el cliente lo vuelve a rellenar con esto si hubo error.
+   */
+  values?: Record<InquiryField, string>;
 };
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -24,12 +30,15 @@ export async function submitInquiry(
   _prev: ContactState,
   formData: FormData,
 ): Promise<ContactState> {
-  const name = str(formData, "name");
-  const email = str(formData, "email");
-  const company = str(formData, "company");
-  const phone = str(formData, "phone");
-  const subject = str(formData, "subject");
-  const message = str(formData, "message");
+  const values: Record<InquiryField, string> = {
+    name: str(formData, "name"),
+    email: str(formData, "email"),
+    company: str(formData, "company"),
+    phone: str(formData, "phone"),
+    subject: str(formData, "subject"),
+    message: str(formData, "message"),
+  };
+  const { name, email, company, phone, subject, message } = values;
 
   // Honeypot anti-spam: si viene relleno, ignoramos silenciosamente.
   if (str(formData, "website")) {
@@ -37,13 +46,22 @@ export async function submitInquiry(
   }
 
   const errors: ContactState["errors"] = {};
-  if (name.length < 2) errors.name = "Ingresa tu nombre.";
+  for (const field of Object.keys(INQUIRY_LIMITS) as InquiryField[]) {
+    const { max } = INQUIRY_LIMITS[field];
+    if (values[field].length > max) errors[field] = `Máximo ${max} caracteres.`;
+  }
+  if (name.length < INQUIRY_LIMITS.name.min) errors.name = "Ingresa tu nombre.";
   if (!EMAIL_RE.test(email)) errors.email = "Ingresa un correo válido.";
-  if (message.length < 10)
-    errors.message = "Cuéntanos un poco más (mínimo 10 caracteres).";
+  if (message.length < INQUIRY_LIMITS.message.min)
+    errors.message = `Cuéntanos un poco más (mínimo ${INQUIRY_LIMITS.message.min} caracteres).`;
 
   if (Object.keys(errors).length > 0) {
-    return { status: "error", message: "Revisa los campos marcados.", errors };
+    return {
+      status: "error",
+      message: "Revisa los campos marcados.",
+      errors,
+      values,
+    };
   }
 
   const supabase = getSupabase();
@@ -72,11 +90,21 @@ export async function submitInquiry(
   });
 
   if (error) {
+    // PT429: límite de envíos por correo (trigger en supabase/schema.sql).
+    if (error.code === "PT429") {
+      return {
+        status: "error",
+        message:
+          "Ya recibimos varias consultas tuyas hace un momento. Espera unos minutos antes de enviar otra.",
+        values,
+      };
+    }
     console.error("[contacto] error al guardar consulta:", error.message);
     return {
       status: "error",
       message:
         "No pudimos enviar tu mensaje. Inténtalo de nuevo o escríbenos por correo.",
+      values,
     };
   }
 

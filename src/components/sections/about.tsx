@@ -13,7 +13,7 @@ const points = [
 
 export function About() {
   return (
-    <section className="border-b border-line py-20 sm:py-24">
+    <section id="nosotros" className="border-b border-line py-20 sm:py-24">
       <Container>
         <div className="grid items-center gap-16 lg:grid-cols-2">
           {/* Composición de imágenes */}

@@ -4,6 +4,7 @@ import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import { CheckCircle2, AlertCircle, Send } from "lucide-react";
 import { submitInquiry, type ContactState } from "@/lib/actions";
+import { INQUIRY_LIMITS, type InquiryField } from "@/lib/inquiry";
 import { cn } from "@/lib/utils";
 
 const initialState: ContactState = { status: "idle" };
@@ -42,13 +43,15 @@ function Field({
   required,
   placeholder,
   error,
+  defaultValue,
 }: {
   label: string;
-  name: string;
+  name: InquiryField;
   type?: string;
   required?: boolean;
   placeholder?: string;
   error?: string;
+  defaultValue?: string;
 }) {
   return (
     <div>
@@ -61,6 +64,8 @@ function Field({
         type={type}
         required={required}
         placeholder={placeholder}
+        defaultValue={defaultValue}
+        maxLength={INQUIRY_LIMITS[name].max}
         aria-invalid={!!error}
         className={cn(
           inputBase,
@@ -75,6 +80,7 @@ function Field({
 
 export function ContactForm() {
   const [state, formAction] = useActionState(submitInquiry, initialState);
+  const values = state.values;
 
   if (state.status === "success" || state.status === "demo") {
     return (
@@ -102,10 +108,10 @@ export function ContactForm() {
       )}
 
       <div className="grid gap-5 sm:grid-cols-2">
-        <Field label="Nombre" name="name" required placeholder="Tu nombre" error={state.errors?.name} />
-        <Field label="Correo electrónico" name="email" type="email" required placeholder="tu@correo.com" error={state.errors?.email} />
-        <Field label="Empresa" name="company" placeholder="Opcional" />
-        <Field label="Teléfono" name="phone" placeholder="Opcional" />
+        <Field label="Nombre" name="name" required placeholder="Tu nombre" error={state.errors?.name} defaultValue={values?.name} />
+        <Field label="Correo electrónico" name="email" type="email" required placeholder="tu@correo.com" error={state.errors?.email} defaultValue={values?.email} />
+        <Field label="Empresa" name="company" placeholder="Opcional" error={state.errors?.company} defaultValue={values?.company} />
+        <Field label="Teléfono" name="phone" type="tel" placeholder="Opcional" error={state.errors?.phone} defaultValue={values?.phone} />
       </div>
 
       <div>
@@ -115,7 +121,10 @@ export function ContactForm() {
         <select
           id="subject"
           name="subject"
-          defaultValue=""
+          // React no actualiza el defaultValue de un <select> ya montado: la
+          // key lo vuelve a montar con lo que se envió.
+          key={values?.subject ?? ""}
+          defaultValue={values?.subject ?? ""}
           className={cn(inputBase, "h-11 border-line focus:border-brand-400")}
         >
           <option value="" disabled>
@@ -139,6 +148,8 @@ export function ContactForm() {
           required
           rows={5}
           placeholder="Cuéntanos sobre tu proyecto o necesidad…"
+          defaultValue={values?.message}
+          maxLength={INQUIRY_LIMITS.message.max}
           aria-invalid={!!state.errors?.message}
           className={cn(
             inputBase,

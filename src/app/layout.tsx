@@ -3,6 +3,7 @@ import { Inter, Archivo, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
+import { siteUrl } from "@/lib/site";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -19,8 +20,6 @@ const jbmono = JetBrains_Mono({
   variable: "--font-jbmono",
   subsets: ["latin"],
 });
-
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://dynamiccoding.dev";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),

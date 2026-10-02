@@ -5,6 +5,9 @@ import { Reveal } from "@/components/ui/reveal";
 import { TeamCard } from "@/components/team/team-card";
 import { getTeam } from "@/lib/data";
 
+// Los datos vienen de Supabase: se regenera como máximo cada 60 s.
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   title: "Equipo",
   description:

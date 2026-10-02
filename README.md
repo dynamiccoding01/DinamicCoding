@@ -38,20 +38,28 @@ Abre http://localhost:3000. Sin configurar Supabase, el sitio funciona en
 ## Conectar Supabase
 
 1. Crea un proyecto en [supabase.com](https://supabase.com).
-2. En **SQL Editor**, ejecuta `supabase/schema.sql` (tablas + RLS) y, si quieres
-   los datos de ejemplo, luego `supabase/seed.sql`.
+2. En **SQL Editor**, ejecuta `supabase/schema.sql` (tablas, RLS, límites y
+   anti-spam) y luego `supabase/seed.sql`. Sin datos, las tablas vacías dejan
+   el portafolio y el equipo en blanco.
 3. Copia `.env.local.example` a `.env.local` y completa con
-   **Project Settings → API**:
+   **Project Settings → Data API / API Keys**:
    - `NEXT_PUBLIC_SUPABASE_URL`
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY` (clave *publishable* o *anon*; nunca la
+     *secret* / *service_role*)
 4. Reinicia `npm run dev`. El sitio pasará a leer/escribir en Supabase
    automáticamente.
+5. En producción: pon las mismas dos variables en **Vercel → Settings →
+   Environment Variables** y haz **Redeploy**.
+
+Los cambios de contenido en Supabase aparecen en el sitio en ~1 minuto (ISR).
 
 ### Seguridad (RLS)
 
 - Lectura pública de `projects` y `team_members`.
 - Inserción pública en `inquiries`, pero **nadie** puede leerlas de forma
   anónima (solo el panel admin con `service_role`).
+- `inquiries` tiene límites de tamaño por campo y un límite de frecuencia
+  (3 consultas por correo y 20 en total cada 10 minutos).
 
 ## Estructura
 
@@ -68,6 +76,8 @@ src/
     seed.ts                 # Datos de ejemplo (modo demo)
     types.ts                # Tipos de dominio
     actions.ts              # Server Action del formulario
+    inquiry.ts              # Límites del formulario (= CHECK de la DB)
+    site.ts                 # URL pública del sitio (SEO)
     supabase/client.ts      # Cliente de Supabase
 supabase/
   schema.sql                # Tablas + RLS

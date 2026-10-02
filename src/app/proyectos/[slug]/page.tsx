@@ -16,6 +16,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getProjectBySlug, getProjects } from "@/lib/data";
 
+// Los datos vienen de Supabase: se regenera como máximo cada 60 s.
+export const revalidate = 60;
+
 type Params = { slug: string };
 
 export async function generateStaticParams() {

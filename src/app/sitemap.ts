@@ -1,7 +1,9 @@
 import type { MetadataRoute } from "next";
 import { getProjects, getTeam } from "@/lib/data";
+import { siteUrl as base } from "@/lib/site";
 
-const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://dynamiccoding.dev";
+// Igual que las páginas: se regenera para incluir proyectos/perfiles nuevos.
+export const revalidate = 60;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();

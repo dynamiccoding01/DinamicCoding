@@ -2,10 +2,13 @@
 -- Dynamic Coding — Esquema de base de datos (Supabase / PostgreSQL)
 -- ----------------------------------------------------------------------------
 -- Ejecuta este script en:  Supabase → SQL Editor → New query → Run
+-- (pensado para un proyecto nuevo; se puede volver a ejecutar sin romper nada,
+--  pero no altera tablas que ya existan).
 --
 -- Este es el sitio PÚBLICO. Con Row Level Security (RLS):
 --   • Cualquiera puede LEER  proyectos y equipo.
---   • Cualquiera puede ENVIAR (INSERT) una consulta.
+--   • Cualquiera puede ENVIAR (INSERT) una consulta, con límites de tamaño y
+--     de frecuencia (anti-spam).
 --   • NADIE puede leer las consultas de forma anónima (solo el panel de
 --     administración, que es el otro proyecto).
 -- ============================================================================
@@ -58,19 +61,61 @@ create table if not exists public.team_members (
 create index if not exists team_members_sort_idx on public.team_members (sort_order);
 
 -- ---------- Tabla: inquiries (consultas recibidas) --------------------------
+-- Los límites coinciden con src/lib/inquiry.ts (validación del formulario).
 create table if not exists public.inquiries (
   id         uuid primary key default gen_random_uuid(),
-  name       text not null,
-  email      text not null,
-  company    text,
-  phone      text,
-  subject    text,
-  message    text not null,
-  status     text not null default 'new',   -- new | in_progress | closed (se gestiona en el panel admin)
+  name       text not null check (char_length(name) between 2 and 120),
+  email      text not null check (
+               char_length(email) <= 254
+               and email ~ '^[^\s@]+@[^\s@]+\.[^\s@]+$'
+             ),
+  company    text check (char_length(company) <= 160),
+  phone      text check (char_length(phone) <= 40),
+  subject    text check (char_length(subject) <= 120),
+  message    text not null check (char_length(message) between 10 and 5000),
+  -- Se gestiona en el panel admin.
+  status     text not null default 'new'
+               check (status in ('new', 'in_progress', 'closed')),
   created_at timestamptz not null default now()
 );
 
 create index if not exists inquiries_created_idx on public.inquiries (created_at desc);
+
+-- ---------- Anti-spam: límite de frecuencia de consultas --------------------
+-- • Máx. 3 consultas por correo cada 10 minutos.
+-- • Máx. 20 consultas en total cada 10 minutos (frena envíos masivos).
+-- El sitio reconoce el código PT429 y muestra un mensaje amable.
+-- La función vive en el esquema `private`, que la API de Supabase no expone.
+create schema if not exists private;
+
+create or replace function private.inquiries_rate_limit()
+returns trigger
+language plpgsql
+security definer          -- necesita contar filas que `anon` no puede leer
+set search_path = ''
+as $$
+begin
+  if (
+    select count(*) from public.inquiries
+    where lower(email) = lower(new.email)
+      and created_at > now() - interval '10 minutes'
+  ) >= 3
+  or (
+    select count(*) from public.inquiries
+    where created_at > now() - interval '10 minutes'
+  ) >= 20
+  then
+    raise exception 'Demasiadas consultas en poco tiempo'
+      using errcode = 'PT429';
+  end if;
+  return new;
+end;
+$$;
+
+drop trigger if exists inquiries_rate_limit on public.inquiries;
+create trigger inquiries_rate_limit
+  before insert on public.inquiries
+  for each row execute function private.inquiries_rate_limit();
 
 -- ============================================================================
 -- Row Level Security
@@ -102,3 +147,10 @@ create policy "public insert inquiries"
 
 -- (No se crea policy de SELECT en inquiries: solo el service_role / panel admin
 --  podrá leerlas. El service_role omite RLS por diseño.)
+
+-- ============================================================================
+-- Permisos de la API (RLS sigue aplicando encima de estos GRANT)
+-- ============================================================================
+grant usage  on schema public to anon, authenticated;
+grant select on public.projects, public.team_members to anon, authenticated;
+grant insert on public.inquiries to anon, authenticated;

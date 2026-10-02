@@ -23,10 +23,13 @@ export function Reveal({
     const el = ref.current;
     if (!el) return;
 
-    // Si el navegador no soporta IntersectionObserver, mostramos el contenido.
+    // Red de seguridad: nunca dejar el contenido oculto (p. ej. si el observer
+    // no dispara porque la pestaña está en segundo plano, o si el navegador no
+    // soporta IntersectionObserver).
+    const fallback = window.setTimeout(() => setVisible(true), 800);
+
     if (typeof IntersectionObserver === "undefined") {
-      setVisible(true);
-      return;
+      return () => window.clearTimeout(fallback);
     }
 
     const observer = new IntersectionObserver(
@@ -40,13 +43,6 @@ export function Reveal({
     );
 
     observer.observe(el);
-
-    // Red de seguridad: nunca dejar el contenido oculto (p. ej. si el observer
-    // no dispara porque la pestaña está en segundo plano).
-    const fallback = window.setTimeout(() => {
-      setVisible(true);
-      observer.disconnect();
-    }, 800);
 
     return () => {
       observer.disconnect();

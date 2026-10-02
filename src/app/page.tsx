@@ -8,6 +8,9 @@ import { TeamPreview } from "@/components/sections/team-preview";
 import { FAQ } from "@/components/sections/faq";
 import { CTA } from "@/components/sections/cta";
 
+// Los datos vienen de Supabase: se regenera como máximo cada 60 s.
+export const revalidate = 60;
+
 export default function HomePage() {
   return (
     <>
