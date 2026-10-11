@@ -55,6 +55,10 @@ es solo por WhatsApp: el formulario aparece cuando hay base de datos.
 
 Los cambios de contenido en Supabase aparecen en el sitio en ~1 minuto (ISR).
 
+Las fotos del equipo y las capturas de proyectos se suben a **Storage →
+media** (carpeta pública que crea `schema.sql`); la URL pública del archivo se
+pega en `avatar_url` o `cover_image`.
+
 ### Seguridad (RLS)
 
 - Lectura pública de `projects` y `team_members`.
@@ -62,6 +66,8 @@ Los cambios de contenido en Supabase aparecen en el sitio en ~1 minuto (ISR).
   anónima (solo el panel admin con `service_role`).
 - `inquiries` tiene límites de tamaño por campo y un límite de frecuencia
   (3 consultas por correo y 20 en total cada 10 minutos).
+- A `anon` solo se le concede leer proyectos y equipo e insertar consultas;
+  no puede modificar ni borrar nada.
 
 ## Estructura
 

@@ -165,6 +165,29 @@ create policy "public insert inquiries"
 -- ============================================================================
 -- Permisos de la API (RLS sigue aplicando encima de estos GRANT)
 -- ============================================================================
+-- Se parte de cero y se concede solo lo que el sitio público necesita: leer
+-- proyectos y equipo, y enviar consultas. Nada de modificar ni borrar.
+revoke all on public.projects, public.team_members, public.inquiries
+  from anon, authenticated;
 grant usage  on schema public to anon, authenticated;
 grant select on public.projects, public.team_members to anon, authenticated;
 grant insert on public.inquiries to anon, authenticated;
+
+-- ============================================================================
+-- Almacenamiento de imágenes (Supabase Storage)
+-- ============================================================================
+-- Carpeta pública «media» para las fotos del equipo y las capturas de los
+-- proyectos. Se suben desde Supabase → Storage → media; después se copia la
+-- URL pública del archivo en `avatar_url` o `cover_image`.
+-- El sitio solo muestra imágenes externas que vengan de aquí.
+do $$
+begin
+  if to_regclass('storage.buckets') is not null then
+    insert into storage.buckets (id, name, public)
+    values ('media', 'media', true)
+    on conflict (id) do nothing;
+  end if;
+exception when others then
+  raise notice 'No se pudo crear la carpeta de imágenes «media»: %', sqlerrm;
+end
+$$;

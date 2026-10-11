@@ -93,7 +93,10 @@ Cambiar una tabla afecta a ambos proyectos.
   (`private.inquiries_rate_limit`) limita la frecuencia de envíos y responde
   con el código `PT429`, que `actions.ts` traduce a un mensaje amable.
 - RLS: lectura pública de `projects`/`team_members`; solo INSERT anónimo en
-  `inquiries` (nunca SELECT anónimo).
+  `inquiries` (nunca SELECT anónimo). `schema.sql` además revoca todo a
+  `anon`/`authenticated` y concede solo eso.
+- Imágenes subidas: bucket público `media` de Supabase Storage (lo crea
+  `schema.sql`); su URL pública va en `avatar_url` / `cover_image`.
 - Las páginas con datos (y `sitemap.ts`) se prerenderizan en el build y se
   regeneran con ISR (`export const revalidate = 60`; `cacheComponents`
   desactivado). Una página nueva que lea de `data.ts` debe exportar lo mismo.
