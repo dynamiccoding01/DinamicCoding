@@ -101,9 +101,14 @@ ignora).
 ## Deploy
 
 Vercel (proyecto conectado al repo `dynamiccoding01/DinamicCoding`): cada push
-a `main` publica en producción (https://dinamic-coding.vercel.app) y cada
-rama/PR genera un preview. Las variables `NEXT_PUBLIC_*` se fijan en el build:
-tras cambiarlas en Vercel hay que hacer Redeploy.
+a `main` publica en producción (https://dinamic-coding.vercel.app). Las
+variables `NEXT_PUBLIC_*` se fijan en el build: tras cambiarlas en Vercel hay
+que hacer Redeploy.
+
+**Flujo de trabajo pedido por el dueño: todo va directo a `main`.** No crear
+ramas ni pull requests. Como cada push se publica al instante, antes de
+empujar hay que pasar `npm run lint`, `npx tsc --noEmit` y `npm run build`, y
+revisar en el navegador lo que cambie a la vista.
 
 ## UI y estilos
 
