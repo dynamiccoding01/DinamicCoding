@@ -1,37 +1,41 @@
 import { Container } from "@/components/ui/container";
+import { Eyebrow } from "@/components/ui/section-heading";
 
-/** Cabecera de páginas interiores (título + descripción sobre banda oscura). */
+/** Cabecera de páginas interiores: título y descripción sobre banda clara. */
 export function PageHeader({
   eyebrow,
   title,
   subtitle,
-  highlight,
+  children,
 }: {
   eyebrow?: string;
   title: string;
   subtitle?: string;
-  /** Palabra final del título con degradado animado. */
-  highlight?: string;
+  /** Contenido extra bajo el subtítulo (botones, enlaces). */
+  children?: React.ReactNode;
 }) {
   return (
     <section className="relative overflow-hidden border-b border-line bg-surface-soft">
-      <div className="bg-grid pointer-events-none absolute inset-0 opacity-60" />
-      <div className="pointer-events-none absolute -left-40 -top-40 h-96 w-96 rounded-full bg-brand-500/10 blur-3xl" />
-      <Container className="relative py-16 sm:py-20">
-        {eyebrow && (
-          <p className="font-mono text-xs font-semibold uppercase tracking-[0.14em] text-brand-600">
-            {eyebrow}
-          </p>
-        )}
-        <h1 className="mt-2 text-balance font-display text-4xl font-extrabold tracking-tight text-ink sm:text-5xl">
+      {/* Formas diagonales de la marca, muy tenues */}
+      <div
+        aria-hidden
+        className="shape-diagonal pointer-events-none absolute bottom-0 right-0 top-0 hidden w-[26rem] bg-brand-100/60 md:block"
+      />
+      <div
+        aria-hidden
+        className="shape-stripe pointer-events-none absolute bottom-0 right-10 top-0 hidden w-[26rem] bg-brand-200/60 md:block"
+      />
+      <Container className="relative py-14 sm:py-16">
+        {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
+        <h1 className="mt-2 max-w-3xl text-balance font-display text-4xl font-extrabold tracking-tight text-navy sm:text-5xl">
           {title}
-          {highlight && <> <span className="grad-text">{highlight}</span></>}
         </h1>
         {subtitle && (
-          <p className="mt-4 max-w-2xl text-pretty text-lg leading-relaxed text-muted">
+          <p className="mt-4 max-w-2xl text-pretty text-lg leading-relaxed text-ink-soft">
             {subtitle}
           </p>
         )}
+        {children && <div className="mt-7">{children}</div>}
       </Container>
     </section>
   );

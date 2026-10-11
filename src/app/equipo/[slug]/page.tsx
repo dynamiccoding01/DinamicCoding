@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, MapPin, Briefcase, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, Briefcase, MapPin } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Avatar } from "@/components/ui/avatar";
+import { WhatsAppButton } from "@/components/ui/whatsapp-button";
 import { SocialLinks } from "@/components/team/social-links";
+import { RoleBadges } from "@/components/team/team-card";
 import { getTeam, getTeamMemberBySlug } from "@/lib/data";
 
 // Los datos vienen de Supabase: se regenera como máximo cada 60 s.
@@ -39,11 +40,13 @@ export default async function TeamMemberPage({
   const member = await getTeamMemberBySlug(slug);
   if (!member) notFound();
 
+  const firstName = member.name.split(" ")[0];
+
   return (
-    <div className="pb-20">
+    <div>
       {/* Cabecera del perfil */}
-      <section className="border-b border-line">
-        <Container className="py-10 sm:py-14">
+      <section className="border-b border-line bg-surface-soft">
+        <Container className="py-12 sm:py-16">
           <Link
             href="/equipo"
             className="inline-flex items-center gap-1.5 text-sm font-medium text-muted transition-colors hover:text-brand-600"
@@ -57,14 +60,15 @@ export default async function TeamMemberPage({
               name={member.name}
               src={member.avatar_url}
               size={128}
-              className="ring-4 ring-brand-50"
+              className="ring-4 ring-white"
             />
             <div>
-              <h1 className="font-display text-3xl font-extrabold tracking-tight text-ink sm:text-4xl">
+              <h1 className="font-display text-3xl font-extrabold tracking-tight text-navy sm:text-4xl">
                 {member.name}
               </h1>
               <p className="mt-1 text-lg font-medium text-brand-600">{member.role}</p>
-              <p className="mt-3 max-w-xl text-pretty text-muted">
+              <RoleBadges member={member} className="mt-3 flex flex-wrap gap-2" />
+              <p className="mt-4 max-w-xl text-pretty text-ink-soft">
                 {member.headline}
               </p>
 
@@ -90,10 +94,10 @@ export default async function TeamMemberPage({
       </section>
 
       {/* Contenido del perfil */}
-      <Container className="mt-12">
+      <Container className="py-14 sm:py-16">
         <div className="grid gap-12 lg:grid-cols-3">
           <div className="lg:col-span-2">
-            <h2 className="font-display text-2xl font-bold tracking-tight text-ink">
+            <h2 className="font-display text-2xl font-extrabold tracking-tight text-navy">
               Perfil profesional
             </h2>
             <p className="mt-4 text-pretty text-base leading-relaxed text-ink-soft">
@@ -102,36 +106,32 @@ export default async function TeamMemberPage({
           </div>
 
           <aside className="lg:col-span-1">
-            <div className="glass rounded-2xl p-6">
-              <h3 className="font-display text-sm font-semibold uppercase tracking-wide text-ink">
-                Habilidades
-              </h3>
-              <div className="mt-4 flex flex-wrap gap-2">
-                {member.skills.map((skill) => (
-                  <Badge key={skill} tone="brand">
-                    {skill}
-                  </Badge>
-                ))}
+            {member.skills.length > 0 && (
+              <div className="card rounded-2xl p-6">
+                <h3 className="font-display text-sm font-bold uppercase tracking-wide text-navy">
+                  En qué te puede ayudar
+                </h3>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {member.skills.map((skill) => (
+                    <Badge key={skill} tone="brand">
+                      {skill}
+                    </Badge>
+                  ))}
+                </div>
               </div>
+            )}
 
-              <h3 className="mt-7 font-display text-sm font-semibold uppercase tracking-wide text-ink">
-                Enlaces
-              </h3>
-              <div className="mt-4">
-                <SocialLinks member={member} size="sm" />
-              </div>
-            </div>
-
-            <div className="mt-6 rounded-2xl border border-cyan/20 bg-cyan/5 p-6">
-              <div className="flex items-start gap-3">
-                <CheckCircle2 size={20} className="mt-0.5 shrink-0 text-brand-600" />
-                <p className="text-sm leading-relaxed text-ink-soft">
-                  Disponible para colaborar en nuevos proyectos con Dynamic Coding.
-                </p>
-              </div>
-              <Button href="/contacto" size="sm" className="mt-4 w-full">
-                Trabajemos juntos
-              </Button>
+            <div className="mt-6 rounded-2xl border border-brand-100 bg-brand-50 p-6 text-center">
+              <p className="text-sm font-semibold text-navy">
+                ¿Quieres una asesoría con {firstName}?
+              </p>
+              <WhatsAppButton
+                message={`Hola, quiero una asesoría con ${member.name}.`}
+                size="md"
+                className="mt-4 w-full"
+              >
+                Pide tu consulta
+              </WhatsAppButton>
             </div>
           </aside>
         </div>

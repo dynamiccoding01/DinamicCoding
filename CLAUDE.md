@@ -6,10 +6,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 # Dynamic Coding — sitio público
 
-Landing de la consultora/desarrolladora de software Dynamic Coding: servicios,
-portafolio (`/proyectos`), equipo (`/equipo`) y formulario de consulta
-(`/contacto`). Next.js 16 (App Router, Turbopack) + React 19 + TypeScript +
-Tailwind v4 + Supabase + lucide-react. Deploy previsto en Vercel.
+Sitio de Dynamic Coding / «DC Consultores · Asesoría y Consultoría» (Santa
+Cruz de la Sierra, Bolivia). Su mensaje central es «No todas las páginas web
+son lo mismo»: asesora al cliente y desarrolla uno de siete tipos de página.
+Los clientes nunca se registran; el canal principal de contacto es WhatsApp.
+
+Rutas: inicio, `/servicios` (+ una página por tipo), `/proyectos`, `/equipo`,
+`/contacto`. Next.js 16 (App Router, Turbopack) + React 19 + TypeScript +
+Tailwind v4 + Supabase + lucide-react. Desplegado en Vercel.
 
 Todo el contenido, la UI y los comentarios del código están en español.
 
@@ -23,16 +27,31 @@ Todo el contenido, la UI y los comentarios del código están en español.
 
 No hay framework de tests ni script `test`.
 
+## Contenido: solo datos reales
+
+No agregar datos de relleno (cifras, testimonios, personas, proyectos,
+teléfonos, correos). Lo que no se sabe se omite y se le pregunta al dueño.
+
+- `src/lib/services.ts` — catálogo fijo: los siete tipos de página (`qué es`,
+  `ideal para`, `need`) y los cinco públicos. Sale de las piezas gráficas de
+  la marca; no vive en Supabase. Alimenta el hero, la grilla, la guía «¿Qué
+  página necesita tu negocio?», `/servicios/[slug]`, el pie y el formulario.
+- `src/lib/contact.ts` — WhatsApp, ciudad y `whatsappUrl(mensaje)`. Todo
+  enlace a WhatsApp sale de ahí (`<WhatsAppButton>`, `<WhatsAppFab>`).
+- `src/lib/seed.ts` — proyectos y personas reales con los que arranca el
+  sitio (Activa Sport, Catálogo Fernández, el fundador).
+- Un proyecto se asocia a un tipo de página cuando `project.category` es
+  igual al `title` del tipo (así aparece en `/servicios/[slug]`).
+
 ## Arquitectura de dos proyectos (importante)
 
 Este repo es SOLO el sitio público. Comparte la MISMA base de datos Supabase
-con un proyecto de administración separado:
+con un proyecto de administración separado (aún no creado):
 
 - Aquí: se LEEN `projects` y `team_members`; solo se INSERTA en `inquiries`
   (formulario de contacto). Clave `anon`, protegida por RLS.
-- Proyecto admin (otro repo, con `service_role`): CRUD de contenido, kardex,
-  movimientos y listado de consultas. No agregar funciones de administración
-  aquí.
+- Proyecto admin (otro repo, con `service_role`): alta de personal con roles,
+  proyectos, consultas, promotores y kardex. No agregar administración aquí.
 
 Cambiar una tabla afecta a ambos proyectos.
 
@@ -40,28 +59,30 @@ Cambiar una tabla afecta a ambos proyectos.
 
 - `src/lib/data.ts` es la única capa de lectura. `getSupabase()`
   (`src/lib/supabase/client.ts`) devuelve `null` si faltan las env vars y
-  entonces se usan `seedProjects`/`seedTeam` de `src/lib/seed.ts` (modo demo).
-  Cualquier error de consulta también cae al demo con un `console.warn("[data] …")`,
-  así que una Supabase mal configurada se ve como "datos de ejemplo", no como error.
-- Escritura: Server Action `submitInquiry` en `src/lib/actions.ts`, usada con
-  `useActionState` en `src/components/contact/contact-form.tsx`. Valida en el
-  servidor, tiene un honeypot (`website`) y devuelve `status: "demo"` si no hay
-  Supabase. Si hay error devuelve `values` y el form los repone vía
-  `defaultValue` (React 19 vacía el form tras cada acción; el `<select>`
-  además necesita `key` para remontarse).
+  entonces se usan `seedProjects`/`seedTeam`. Cualquier error de consulta
+  también cae a esos datos con un `console.warn("[data] …")`.
+- Si Supabase está conectado pero las tablas están vacías, el sitio se ve
+  vacío: por eso `supabase/seed.sql` carga los mismos datos que `seed.ts`.
+- Mantener sincronizados: `src/lib/types.ts` ↔ `src/lib/seed.ts` ↔
+  `supabase/schema.sql` (tablas + RLS) ↔ `supabase/seed.sql`.
+- Personal: `team_members.role` es el cargo visible y `roles` (text[]) los
+  roles que cumple (`desarrollador`, `consultor`, `promotor`…); las etiquetas
+  están en `src/lib/roles.ts`.
+- Formulario: Server Action `submitInquiry` (`src/lib/actions.ts`) con
+  `useActionState` en `contact-form.tsx`. `/contacto` solo lo muestra si
+  `isSupabaseConfigured()`; sin base de datos queda solo WhatsApp, para no
+  recibir consultas que se perderían. Si hay error devuelve `values` y el
+  form los repone vía `defaultValue` (React 19 vacía el form tras cada
+  acción; el `<select>` además necesita `key` para remontarse).
 - Límites de las consultas: `src/lib/inquiry.ts` (servidor + `maxLength`) debe
   coincidir con los CHECK de `inquiries` en `supabase/schema.sql`. Un trigger
   (`private.inquiries_rate_limit`) limita la frecuencia de envíos y responde
   con el código `PT429`, que `actions.ts` traduce a un mensaje amable.
-- Mantener sincronizados: `src/lib/types.ts` ↔ `src/lib/seed.ts` ↔
-  `supabase/schema.sql` (tablas + RLS) ↔ `supabase/seed.sql`.
 - RLS: lectura pública de `projects`/`team_members`; solo INSERT anónimo en
   `inquiries` (nunca SELECT anónimo).
 - Las páginas con datos (y `sitemap.ts`) se prerenderizan en el build y se
   regeneran con ISR (`export const revalidate = 60`; `cacheComponents`
   desactivado). Una página nueva que lea de `data.ts` debe exportar lo mismo.
-  Si Supabase está conectado pero las tablas están vacías, el sitio se ve
-  vacío (el fallback al demo es solo para cliente nulo o error).
 - `next.config.ts` solo admite imágenes remotas de
   `<NEXT_PUBLIC_SUPABASE_URL>/storage/v1/object/public/**`; cualquier otra URL
   externa en `cover_image`/`avatar_url` no se mostrará. Imágenes locales en
@@ -70,8 +91,8 @@ Cambiar una tabla afecta a ambos proyectos.
 ### Variables de entorno
 
 `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` (clave
-publishable/anon; sin ellas → modo demo) y, opcional, `NEXT_PUBLIC_SITE_URL`.
-La URL pública del sitio sale de `src/lib/site.ts` (esa variable →
+publishable/anon) y, opcional, `NEXT_PUBLIC_SITE_URL`. La URL pública del
+sitio sale de `src/lib/site.ts` (esa variable →
 `VERCEL_PROJECT_PRODUCTION_URL` → localhost) y la usan `metadataBase`,
 `sitemap.ts` y `robots.ts`. Plantilla versionada en `.env.local.example`
 (excepción `!.env.local.example` en el `.gitignore`; el resto de `.env*` se
@@ -86,35 +107,45 @@ tras cambiarlas en Vercel hay que hacer Redeploy.
 
 ## UI y estilos
 
-- Tema híbrido: cuerpo claro + hero oscuro con fondo "Aurora" animado. No hay
-  modo oscuro ni theme toggle.
+- Tema claro, minimalista y profesional, alineado con las piezas gráficas de
+  la marca. No hay modo oscuro. El dueño pidió sobriedad: animaciones
+  discretas, sin efectos llamativos.
 - Tailwind v4 sin `tailwind.config`: los tokens viven en `@theme` de
-  `src/app/globals.css`. Usar `brand-50…900`, `navy`, `navy-deep`, `cyan`,
-  `violet`, `ink`, `ink-soft`, `muted`, `line`, `surface`, `surface-soft` en vez
-  de colores arbitrarios. La paleta sale de los azules del logo.
-- Fuentes (`next/font` en `layout.tsx`): `font-sans` Inter, `font-display`
-  Archivo, `font-mono` JetBrains Mono.
-- Las utilidades propias de `globals.css` tienen variante clara y oscura:
-  `.glass`/`.glass-dark`, `.grad-text`/`.grad-text-bright`,
-  `.bg-grid`/`.bg-grid-on-dark`. Las variantes oscuras, `.aurora` y `.spot`
-  son solo para secciones oscuras. `.card-glow` es el hover de tarjetas claras.
-- Toda animación nueva debe desactivarse en el bloque
-  `prefers-reduced-motion` al final de `globals.css`.
+  `src/app/globals.css` y son los colores medidos del logo y los flyers.
+  Usar `brand-50…900`, `navy` (titulares), `navy-deep`, `sky`, `whatsapp`,
+  `ink`, `ink-soft`, `muted`, `line`, `surface`, `surface-soft`; no colores
+  arbitrarios. Títulos en `text-navy`, botón primario `bg-navy`.
+- Fuentes (`next/font` en `layout.tsx`): `font-sans` Inter y `font-display`
+  Archivo. No se usa tipografía monoespaciada.
+- Clases propias en `@layer components` de `globals.css` (así las utilidades
+  de Tailwind pueden sobrescribirlas): `.card` y `.card-hover` (tarjetas),
+  y los motivos de la marca `.slant` (banda en paralelogramo), `.pin` (línea
+  con punto junto a textos de apoyo), `.shape-diagonal` / `.shape-stripe`
+  (formas diagonales del hero, cabeceras y llamado final).
+- Animaciones: `<Reveal>` al hacer scroll, `.type-row` (resaltado que recorre
+  la lista del hero, solo CSS), `.float-slow` y `.wa-pulse`. Toda animación
+  nueva debe desactivarse en el bloque `prefers-reduced-motion` del final.
 - `<Reveal>` (`src/components/ui/reveal.tsx`): `.reveal.is-visible` debe
   mantener `opacity: 1` explícito (no solo vía la animación) y el fallback de
   800 ms, o el contenido queda invisible en pestañas en segundo plano.
 - ESLint incluye `react-hooks/set-state-in-effect`: no llamar `setState` de
   forma síncrona dentro de un `useEffect` (usar callbacks, timers o rAF).
-- En superficies claras no usar `text-cyan` para texto (contraste ~1.7:1):
-  usar `text-brand-600`. `cyan` es para el hero/footer oscuros.
-- lucide-react v1.x no trae logos de marca: GitHub/LinkedIn/X están en
-  `src/components/ui/brand-icons.tsx`.
-- Server Components por defecto; solo son cliente `contact-form`, `navbar`,
-  `stats`, `reveal` y `spotlight`. Combinar clases con `cn()` de
-  `src/lib/utils.ts` (clsx + tailwind-merge).
+- Logo: `public/brand/logo-dc.png` (monograma) y `logo-dynamic-coding.png`
+  (completo), PNG transparentes generados desde el JPG que entregó el dueño
+  (no hay vectorial). Es azul: sobre fondo oscuro no contrasta, así que el
+  logo siempre va sobre superficies claras. `src/app/icon.png` y
+  `apple-icon.png` salen del monograma; `opengraph-image.tsx` lee el PNG del
+  disco.
+- Portadas de proyecto: capturas de celular con fondo transparente en
+  `public/images/proyectos`. `ProjectCard` las ancla arriba y las recorta por
+  abajo sobre un panel de marca; el detalle las muestra completas.
+- lucide-react v1.x no trae logos de marca: GitHub/LinkedIn/X/WhatsApp están
+  en `src/components/ui/brand-icons.tsx`.
+- Server Components por defecto; solo son cliente `contact-form`, `navbar` y
+  `reveal`. Combinar clases con `cn()` de `src/lib/utils.ts`.
 - Estructura: `src/components/ui` (primitivas), `sections` (bloques de la
   home, compuestos en `src/app/page.tsx`), `layout` (navbar/footer), y
-  `projects`/`team`/`contact` (tarjetas y formulario).
+  `services`/`projects`/`team`/`contact`.
 
 ## Next.js 16
 
@@ -122,4 +153,5 @@ tras cambiarlas en Vercel hay que hacer Redeploy.
   hacer `await params`.
 - Los layouts usan el helper global `LayoutProps<"/">`.
 - SEO por convención de archivos: `sitemap.ts`, `robots.ts`,
-  `opengraph-image.tsx`, `icon.svg`, `not-found.tsx` en `src/app`.
+  `opengraph-image.tsx`, `icon.png`, `apple-icon.png`, `not-found.tsx` en
+  `src/app`.

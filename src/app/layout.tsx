@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import { Inter, Archivo, JetBrains_Mono } from "next/font/google";
+import { Inter, Archivo } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
+import { WhatsAppFab } from "@/components/ui/whatsapp-button";
 import { siteUrl } from "@/lib/site";
 
 const inter = Inter({
@@ -16,40 +17,40 @@ const archivo = Archivo({
   weight: ["600", "700", "800", "900"],
 });
 
-const jbmono = JetBrains_Mono({
-  variable: "--font-jbmono",
-  subsets: ["latin"],
-});
+const title = "Dynamic Coding — Páginas web a la medida de tu negocio";
+const description =
+  "Asesoría y desarrollo de páginas web en Santa Cruz de la Sierra, Bolivia: landing pages, páginas corporativas, catálogos digitales, tiendas online, reservas y soluciones a medida.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Dynamic Coding — Consultora y desarrolladora de software",
+    default: title,
     template: "%s — Dynamic Coding",
   },
-  description:
-    "Diseñamos y desarrollamos productos digitales a la medida: aplicaciones web, móviles y sistemas de gestión. Conoce nuestros proyectos y nuestro equipo.",
+  description,
   keywords: [
-    "desarrollo de software",
-    "consultora de software",
-    "aplicaciones web",
-    "aplicaciones móviles",
-    "Next.js",
+    "páginas web",
+    "diseño de páginas web",
+    "tienda online",
+    "catálogo digital",
+    "landing page",
+    "asesoría y consultoría",
+    "Santa Cruz de la Sierra",
+    "Bolivia",
     "Dynamic Coding",
+    "DC Consultores",
   ],
   openGraph: {
-    title: "Dynamic Coding — Consultora y desarrolladora de software",
-    description:
-      "Diseñamos y desarrollamos productos digitales a la medida. Conoce nuestros proyectos y nuestro equipo.",
+    title,
+    description,
     type: "website",
-    locale: "es_ES",
+    locale: "es_BO",
     siteName: "Dynamic Coding",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Dynamic Coding — Consultora y desarrolladora de software",
-    description:
-      "Diseñamos y desarrollamos productos digitales a la medida. Conoce nuestros proyectos y nuestro equipo.",
+    title,
+    description,
   },
 };
 
@@ -57,12 +58,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="es"
-      className={`${inter.variable} ${archivo.variable} ${jbmono.variable} h-full antialiased`}
+      className={`${inter.variable} ${archivo.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-surface">
+      <body className="flex min-h-full flex-col bg-surface">
         <Navbar />
         <main className="flex-1">{children}</main>
         <Footer />
+        <WhatsAppFab />
       </body>
     </html>
   );

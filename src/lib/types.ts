@@ -39,8 +39,13 @@ export interface TeamMember {
   id: string;
   slug: string;
   name: string;
-  /** Rol/cargo, ej: "Full-Stack Developer" */
+  /** Cargo visible, ej: "Fundador" */
   role: string;
+  /**
+   * Roles que cumple en la empresa: "desarrollador", "consultor",
+   * "promotor"… Una persona puede tener varios. Etiquetas en lib/roles.ts
+   */
+  roles: string[];
   /** Frase corta que resume su perfil */
   headline: string;
   /** Biografía profesional larga */

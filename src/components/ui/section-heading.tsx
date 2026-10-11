@@ -1,5 +1,25 @@
 import { cn } from "@/lib/utils";
 
+/** Etiqueta pequeña en mayúsculas que antecede a un título. */
+export function Eyebrow({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <p
+      className={cn(
+        "text-xs font-semibold uppercase tracking-[0.16em] text-brand-600",
+        className,
+      )}
+    >
+      {children}
+    </p>
+  );
+}
+
 /** Encabezado de sección con "eyebrow", título y subtítulo opcionales. */
 export function SectionHeading({
   eyebrow,
@@ -22,12 +42,8 @@ export function SectionHeading({
         className,
       )}
     >
-      {eyebrow && (
-        <p className="mb-3 font-mono text-xs font-semibold uppercase tracking-[0.14em] text-brand-600">
-          {eyebrow}
-        </p>
-      )}
-      <h2 className="text-balance font-display text-3xl font-extrabold tracking-tight text-ink sm:text-4xl">
+      {eyebrow && <Eyebrow className="mb-3">{eyebrow}</Eyebrow>}
+      <h2 className="text-balance font-display text-3xl font-extrabold tracking-tight text-navy sm:text-4xl">
         {title}
       </h2>
       {subtitle && (

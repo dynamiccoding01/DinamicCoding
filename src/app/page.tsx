@@ -1,10 +1,10 @@
 import { Hero } from "@/components/sections/hero";
-import { About } from "@/components/sections/about";
-import { Stats } from "@/components/sections/stats";
-import { Services } from "@/components/sections/services";
+import { Audiences } from "@/components/sections/audiences";
+import { ServiceTypes } from "@/components/sections/service-types";
+import { Guide } from "@/components/sections/guide";
 import { FeaturedProjects } from "@/components/sections/featured-projects";
-import { TechStack } from "@/components/sections/tech-stack";
-import { TeamPreview } from "@/components/sections/team-preview";
+import { Process } from "@/components/sections/process";
+import { About } from "@/components/sections/about";
 import { FAQ } from "@/components/sections/faq";
 import { CTA } from "@/components/sections/cta";
 
@@ -15,12 +15,12 @@ export default function HomePage() {
   return (
     <>
       <Hero />
-      <About />
-      <Stats />
-      <Services />
+      <Audiences />
+      <ServiceTypes />
+      <Guide />
       <FeaturedProjects />
-      <TechStack />
-      <TeamPreview />
+      <Process />
+      <About />
       <FAQ />
       <CTA />
     </>

@@ -5,17 +5,15 @@ import { useFormStatus } from "react-dom";
 import { CheckCircle2, AlertCircle, Send } from "lucide-react";
 import { submitInquiry, type ContactState } from "@/lib/actions";
 import { INQUIRY_LIMITS, type InquiryField } from "@/lib/inquiry";
+import { serviceTypes } from "@/lib/services";
 import { cn } from "@/lib/utils";
 
 const initialState: ContactState = { status: "idle" };
 
 const services = [
-  "Aplicación web",
-  "Aplicación móvil",
-  "Sistema de gestión / ERP",
-  "E-commerce",
-  "Consultoría / arquitectura",
-  "Diseño UI/UX",
+  ...serviceTypes.map((type) => type.title),
+  "App móvil o sistema a medida",
+  "Asesoría y consultoría",
   "Otro",
 ];
 
@@ -28,7 +26,7 @@ function SubmitButton() {
     <button
       type="submit"
       disabled={pending}
-      className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-brand-600 px-7 text-base font-semibold text-white shadow-sm transition-all hover:bg-brand-700 hover:shadow-md active:scale-[0.99] disabled:pointer-events-none disabled:opacity-60 sm:w-auto"
+      className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-navy px-7 text-base font-semibold text-white shadow-sm transition-all hover:bg-navy-deep hover:shadow-md active:scale-[0.99] disabled:pointer-events-none disabled:opacity-60 sm:w-auto"
     >
       {pending ? "Enviando…" : "Enviar consulta"}
       {!pending && <Send size={17} />}
@@ -128,7 +126,7 @@ export function ContactForm() {
           className={cn(inputBase, "h-11 border-line focus:border-brand-400")}
         >
           <option value="" disabled>
-            Selecciona un servicio…
+            Selecciona una opción…
           </option>
           {services.map((s) => (
             <option key={s} value={s}>

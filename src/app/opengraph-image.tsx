@@ -1,10 +1,19 @@
 import { ImageResponse } from "next/og";
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
+import { contact } from "@/lib/contact";
 
-export const alt = "Dynamic Coding — Consultora y desarrolladora de software";
+export const alt = "Dynamic Coding — No todas las páginas web son lo mismo";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-export default function OpengraphImage() {
+/** Imagen al compartir el sitio: logo real y mensaje central de la marca. */
+export default async function OpengraphImage() {
+  const logo = await readFile(
+    join(process.cwd(), "public/brand/logo-dynamic-coding.png"),
+    "base64",
+  );
+
   return new ImageResponse(
     (
       <div
@@ -12,65 +21,92 @@ export default function OpengraphImage() {
           width: "100%",
           height: "100%",
           display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-          padding: 72,
-          backgroundColor: "#070c18",
-          backgroundImage:
-            "radial-gradient(700px 480px at 12% 4%, rgba(47,138,217,0.40), transparent 60%), radial-gradient(700px 480px at 96% 26%, rgba(124,108,255,0.38), transparent 60%), radial-gradient(600px 420px at 60% 108%, rgba(56,214,245,0.30), transparent 60%)",
+          backgroundColor: "#f6f8fb",
           fontFamily: "sans-serif",
         }}
       >
-        {/* Logo */}
-        <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
+        {/* Mensaje */}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+            width: 760,
+            padding: "64px 0 64px 72px",
+          }}
+        >
           <div
             style={{
-              width: 76,
-              height: 76,
-              borderRadius: 18,
               display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              background: "linear-gradient(135deg, #2f8ad9, #123a6e)",
+              alignSelf: "flex-start",
+              padding: "10px 26px",
+              backgroundColor: "#0274d7",
               color: "white",
-              fontSize: 34,
-              fontWeight: 800,
+              fontSize: 21,
+              letterSpacing: 4,
             }}
           >
-            {"</>"}
+            CONSULTORES · ASESORÍA Y CONSULTORÍA
           </div>
-          <div style={{ display: "flex", fontSize: 34, fontWeight: 800, letterSpacing: 1, color: "white" }}>
-            DYNAMIC
-            <span style={{ color: "#38d6f5" }}>CODING</span>
+
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                fontSize: 74,
+                lineHeight: 1.08,
+                letterSpacing: -2,
+                color: "#083189",
+              }}
+            >
+              <span>No todas las páginas</span>
+              <span style={{ display: "flex" }}>
+                web son
+                <span style={{ color: "#0274d7", marginLeft: 20 }}>lo mismo</span>
+              </span>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                marginTop: 30,
+                paddingLeft: 22,
+                borderLeft: "5px solid #0274d7",
+                fontSize: 28,
+                lineHeight: 1.35,
+                color: "#37445a",
+              }}
+            >
+              Te asesoramos y desarrollamos la que tu negocio necesita.
+            </div>
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", color: "#083189" }}>
+            <span style={{ fontSize: 30 }}>WhatsApp {contact.whatsappDisplay}</span>
+            <span style={{ marginTop: 6, fontSize: 22, color: "#5b6b82" }}>
+              {contact.city}
+            </span>
           </div>
         </div>
 
-        {/* Titular */}
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          <div
-            style={{
-              display: "flex",
-              flexWrap: "wrap",
-              fontSize: 68,
-              fontWeight: 800,
-              lineHeight: 1.05,
-              letterSpacing: -1.5,
-              color: "#eaf1fb",
-              maxWidth: 940,
-            }}
-          >
-            Construimos el software que tu empresa
-            <span style={{ color: "#38d6f5", marginLeft: 16 }}>necesita.</span>
-          </div>
-          <div style={{ display: "flex", marginTop: 26, fontSize: 30, color: "#b7c8e2" }}>
-            Aplicaciones web, móviles y sistemas de gestión a la medida.
-          </div>
-        </div>
-
-        {/* Pie */}
-        <div style={{ display: "flex", alignItems: "center", gap: 14, fontSize: 26, color: "#8ea3c0" }}>
-          <div style={{ display: "flex", width: 12, height: 12, borderRadius: 6, background: "#38d6f5" }} />
-          dynamiccoding.dev
+        {/* Logo sobre panel blanco */}
+        <div
+          style={{
+            display: "flex",
+            flex: 1,
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "#ffffff",
+            borderLeft: "10px solid #083189",
+          }}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={`data:image/png;base64,${logo}`}
+            width={340}
+            height={257}
+            alt=""
+          />
         </div>
       </div>
     ),

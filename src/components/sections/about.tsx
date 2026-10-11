@@ -1,94 +1,78 @@
-import Image from "next/image";
-import { CheckCircle2, ArrowRight } from "lucide-react";
-import { Container } from "@/components/ui/container";
+import { ArrowRight, CheckCircle2 } from "lucide-react";
+import { BrandLogoFull } from "@/components/ui/brand-mark";
 import { Button } from "@/components/ui/button";
+import { Container } from "@/components/ui/container";
 import { Reveal } from "@/components/ui/reveal";
+import { Eyebrow } from "@/components/ui/section-heading";
 
 const points = [
-  "Equipo senior y trato directo, sin intermediarios.",
-  "Código limpio, documentado y mantenible.",
-  "Entregas a tiempo y con comunicación constante.",
-  "Acompañamiento y soporte después del lanzamiento.",
+  {
+    title: "Primero asesoramos",
+    text: "Antes de cotizar entendemos tu objetivo y te recomendamos el tipo de página adecuado.",
+  },
+  {
+    title: "Atención con nombre y apellido",
+    text: "Sabes quién te atiende y puedes ver su perfil antes de escribir.",
+  },
+  {
+    title: "Sin barreras",
+    text: "No necesitas registrarte para conocernos ni para pedir una consulta.",
+  },
 ];
 
 export function About() {
   return (
     <section id="nosotros" className="border-b border-line py-20 sm:py-24">
-      <Container>
-        <div className="grid items-center gap-16 lg:grid-cols-2">
-          {/* Composición de imágenes */}
-          <Reveal>
-            <div className="relative">
-              <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-white/10 shadow-2xl shadow-black/50">
-                <Image
-                  src="/images/team-collab.jpg"
-                  alt="Equipo de Dynamic Coding trabajando"
-                  fill
-                  sizes="(max-width: 1024px) 100vw, 500px"
-                  className="object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-navy-deep/50 to-transparent" />
-              </div>
+      <Container className="grid items-center gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
+        <Reveal>
+          <div className="relative overflow-hidden rounded-3xl border border-line bg-surface-soft px-8 py-16">
+            <div
+              aria-hidden
+              className="shape-diagonal absolute inset-y-0 right-0 w-1/2 bg-brand-100/70"
+            />
+            <div
+              aria-hidden
+              className="shape-stripe absolute inset-y-0 right-6 w-1/2 bg-brand-200/70"
+            />
+            <BrandLogoFull className="relative mx-auto w-52" />
+          </div>
+        </Reveal>
 
-              {/* Imagen secundaria flotante (código) */}
-              <div className="absolute -bottom-6 right-[-10px] w-[46%] overflow-hidden rounded-xl border border-white shadow-2xl shadow-black/20 sm:right-[-16px]">
-                <div className="relative aspect-[4/3]">
-                  <Image
-                    src="/images/hero-code.jpg"
-                    alt="Código en pantalla"
-                    fill
-                    sizes="240px"
-                    className="object-cover"
-                  />
-                </div>
-              </div>
+        <Reveal delay={120}>
+          <Eyebrow>Quiénes somos</Eyebrow>
+          <h2 className="mt-3 text-balance font-display text-3xl font-extrabold tracking-tight text-navy sm:text-4xl">
+            Te asesoramos antes de construir
+          </h2>
+          <p className="mt-5 text-pretty text-lg leading-relaxed text-ink-soft">
+            Somos Dynamic Coding. Asesoramos a negocios, empresas,
+            emprendedores, profesionales y marcas personales para elegir la
+            página web que de verdad necesitan, y la desarrollamos a su medida.
+          </p>
 
-              {/* Badge flotante con dato */}
-              <div className="glass absolute -left-3 -top-5 rounded-xl px-4 py-3 shadow-xl sm:-left-6">
-                <p className="font-display text-2xl font-extrabold text-ink">+50</p>
-                <p className="font-mono text-[11px] uppercase tracking-wide text-muted">
-                  proyectos entregados
+          <ul className="mt-7 space-y-4">
+            {points.map((point) => (
+              <li key={point.title} className="flex items-start gap-3">
+                <CheckCircle2 size={21} className="mt-0.5 shrink-0 text-brand-500" />
+                <p className="text-[15px] leading-relaxed text-ink-soft">
+                  <strong className="font-semibold text-ink">{point.title}.</strong>{" "}
+                  {point.text}
                 </p>
-              </div>
-            </div>
-          </Reveal>
+              </li>
+            ))}
+          </ul>
 
-          {/* Texto */}
-          <Reveal delay={120}>
-            <div>
-              <p className="font-mono text-xs font-semibold uppercase tracking-[0.14em] text-brand-600">
-                Quiénes somos
-              </p>
-              <h2 className="mt-3 text-balance font-display text-3xl font-extrabold tracking-tight text-ink sm:text-4xl">
-                Personas reales escribiendo{" "}
-                <span className="grad-text">código real</span>.
-              </h2>
-              <p className="mt-5 text-pretty text-lg leading-relaxed text-muted">
-                En Dynamic Coding somos un equipo apasionado por resolver
-                problemas con tecnología. Combinamos experiencia técnica y
-                cercanía para acompañarte en cada etapa de tu producto.
-              </p>
+          <p className="mt-6 text-sm leading-relaxed text-muted">
+            Además de páginas web, desarrollamos aplicaciones móviles y
+            sistemas de gestión a medida.
+          </p>
 
-              <ul className="mt-7 grid gap-3 sm:grid-cols-2">
-                {points.map((point) => (
-                  <li key={point} className="flex items-start gap-3">
-                    <CheckCircle2 size={20} className="mt-0.5 shrink-0 text-brand-600" />
-                    <span className="text-sm leading-relaxed text-ink-soft">
-                      {point}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-
-              <div className="mt-8">
-                <Button href="/equipo" variant="secondary">
-                  Conoce al equipo
-                  <ArrowRight size={16} />
-                </Button>
-              </div>
-            </div>
-          </Reveal>
-        </div>
+          <div className="mt-8">
+            <Button href="/equipo" variant="secondary">
+              Conoce al equipo
+              <ArrowRight size={16} />
+            </Button>
+          </div>
+        </Reveal>
       </Container>
     </section>
   );

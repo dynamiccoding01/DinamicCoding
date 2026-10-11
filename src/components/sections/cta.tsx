@@ -1,32 +1,48 @@
-import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/ui/container";
-import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/ui/reveal";
+import { WhatsAppButton } from "@/components/ui/whatsapp-button";
+import { contact } from "@/lib/contact";
 
-export function CTA() {
+/** Llamado final a cotizar por WhatsApp. `message` personaliza el mensaje. */
+export function CTA({
+  title = "Cotiza tu página web con nosotros",
+  text = "Cuéntanos qué necesita tu negocio y te recomendamos el tipo de página adecuado.",
+  message,
+}: {
+  title?: string;
+  text?: string;
+  message?: string;
+}) {
   return (
     <section className="py-20 sm:py-24">
       <Container>
         <Reveal>
-          <div className="bg-grid relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-navy via-brand-700 to-navy-deep px-8 py-16 text-center shadow-2xl shadow-black/40 sm:px-16">
-            <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-cyan/25 blur-3xl" />
-            <div className="pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-violet/25 blur-3xl" />
-            <h2 className="relative text-balance font-display text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-              ¿Tienes un proyecto en mente?
-            </h2>
-            <p className="relative mx-auto mt-4 max-w-xl text-pretty text-lg leading-relaxed text-brand-100">
-              Cuéntanos qué necesitas y te respondemos con una propuesta. La
-              primera consulta no tiene costo.
-            </p>
-            <div className="relative mt-8 flex justify-center">
-              <Button
-                href="/contacto"
-                size="lg"
-                className="bg-white text-brand-700 shadow-lg hover:bg-brand-50 hover:text-brand-700"
-              >
-                Solicitar una consulta
-                <ArrowRight size={18} />
-              </Button>
+          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-800 to-navy-deep px-8 py-14 sm:px-14 sm:py-16">
+            {/* Formas diagonales de la marca */}
+            <div
+              aria-hidden
+              className="shape-stripe absolute inset-y-0 right-8 hidden w-[40%] bg-white/15 md:block"
+            />
+            <div
+              aria-hidden
+              className="shape-diagonal absolute inset-y-0 right-0 hidden w-[40%] bg-gradient-to-b from-sky to-brand-500 md:block"
+            />
+
+            <div className="relative max-w-lg">
+              <h2 className="text-balance font-display text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+                {title}
+              </h2>
+              <p className="mt-4 text-pretty text-lg leading-relaxed text-brand-100">
+                {text}
+              </p>
+              <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
+                <WhatsAppButton message={message} variant="secondary">
+                  Escríbenos por WhatsApp
+                </WhatsAppButton>
+                <span className="font-display text-xl font-bold tracking-wide text-white">
+                  {contact.whatsappDisplay}
+                </span>
+              </div>
             </div>
           </div>
         </Reveal>

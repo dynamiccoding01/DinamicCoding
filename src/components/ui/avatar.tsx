@@ -43,7 +43,7 @@ export function Avatar({
           className="object-cover"
         />
       ) : (
-        <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-cyan to-brand-800 font-display font-bold text-white">
+        <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-brand-500 to-navy font-display font-bold text-white">
           <span style={{ fontSize: size * 0.36 }}>{initials(name)}</span>
         </div>
       )}

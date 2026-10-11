@@ -41,7 +41,8 @@ create table if not exists public.team_members (
   id               uuid primary key default gen_random_uuid(),
   slug             text unique not null,
   name             text not null,
-  role             text not null,
+  role             text not null,                 -- cargo visible, ej. 'Fundador'
+  roles            text[] not null default '{}',  -- 'desarrollador', 'consultor', 'promotor'…
   headline         text not null default '',
   bio              text not null default '',
   avatar_url       text,

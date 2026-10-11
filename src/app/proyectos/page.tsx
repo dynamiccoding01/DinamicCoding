@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Container } from "@/components/ui/container";
 import { PageHeader } from "@/components/ui/page-header";
 import { Reveal } from "@/components/ui/reveal";
-import { ProjectCard } from "@/components/projects/project-card";
+import { ProjectGrid } from "@/components/projects/project-card";
+import { CTA } from "@/components/sections/cta";
 import { getProjects } from "@/lib/data";
 
 // Los datos vienen de Supabase: se regenera como máximo cada 60 s.
@@ -11,7 +12,7 @@ export const revalidate = 60;
 export const metadata: Metadata = {
   title: "Proyectos",
   description:
-    "Explora los proyectos de software que hemos desarrollado en Dynamic Coding: aplicaciones web, móviles y sistemas de gestión.",
+    "Páginas web, catálogos digitales y tiendas online que hemos desarrollado en Dynamic Coding.",
 };
 
 export default async function ProjectsPage() {
@@ -20,22 +21,20 @@ export default async function ProjectsPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Portafolio"
-        title="Nuestros proyectos"
-        subtitle="Cada proyecto es un problema de negocio resuelto con software. Haz clic en cualquiera para ver de qué se trata y cómo lo construimos."
+        eyebrow="Proyectos"
+        title="Páginas que ya están funcionando"
+        subtitle="Cada proyecto responde a un objetivo distinto. Entra en cualquiera para ver de qué se trata."
       />
 
-      <section className="py-16 sm:py-20">
+      <section className="border-b border-line py-16 sm:py-20">
         <Container>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {projects.map((project, i) => (
-              <Reveal key={project.id} delay={(i % 3) * 80}>
-                <ProjectCard project={project} />
-              </Reveal>
-            ))}
-          </div>
+          <Reveal>
+            <ProjectGrid projects={projects} />
+          </Reveal>
         </Container>
       </section>
+
+      <CTA />
     </>
   );
 }

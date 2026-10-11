@@ -1,8 +1,9 @@
 # Dynamic Coding — Sitio público
 
-Landing page de la consultora y desarrolladora de software **Dynamic Coding**.
-Muestra los servicios, el portafolio de proyectos y los perfiles del equipo, e
-incluye un formulario de consulta para clientes.
+Sitio de **Dynamic Coding** · *DC Consultores, Asesoría y Consultoría* (Santa
+Cruz de la Sierra, Bolivia). Su mensaje central: **«No todas las páginas web son
+lo mismo»**. Presenta los siete tipos de página que desarrolla la empresa, sus
+proyectos y su equipo, y permite cotizar por WhatsApp sin registrarse.
 
 ## Stack
 
@@ -32,8 +33,9 @@ npm install
 npm run dev
 ```
 
-Abre http://localhost:3000. Sin configurar Supabase, el sitio funciona en
-**modo demo** con los datos de ejemplo de `src/lib/seed.ts`.
+Abre http://localhost:3000. Sin configurar Supabase, el sitio muestra los
+datos iniciales de `src/lib/seed.ts` (proyectos y personas reales) y el contacto
+es solo por WhatsApp: el formulario aparece cuando hay base de datos.
 
 ## Conectar Supabase
 
@@ -66,22 +68,29 @@ Los cambios de contenido en Supabase aparecen en el sitio en ~1 minuto (ISR).
 ```
 src/
   app/
-    page.tsx                # Inicio (hero, servicios, proyectos, equipo, CTA)
+    page.tsx                # Inicio
+    servicios/              # Los 7 tipos de página + detalle [slug]
     proyectos/              # Vitrina + detalle [slug]
     equipo/                 # Grilla + perfil [slug]
-    contacto/               # Formulario de consulta
+    contacto/               # WhatsApp y formulario de consulta
   components/               # UI, secciones, layout, tarjetas, formulario
   lib/
-    data.ts                 # Acceso a datos (Supabase o demo)
-    seed.ts                 # Datos de ejemplo (modo demo)
+    services.ts             # Catálogo: 7 tipos de página y públicos
+    contact.ts              # WhatsApp y ciudad
+    data.ts                 # Acceso a datos (Supabase o datos iniciales)
+    seed.ts                 # Datos iniciales (proyectos y personas reales)
     types.ts                # Tipos de dominio
+    roles.ts                # Etiquetas de los roles del personal
     actions.ts              # Server Action del formulario
     inquiry.ts              # Límites del formulario (= CHECK de la DB)
     site.ts                 # URL pública del sitio (SEO)
     supabase/client.ts      # Cliente de Supabase
+public/
+  brand/                    # Logo (PNG transparente)
+  images/proyectos/         # Capturas de los proyectos
 supabase/
   schema.sql                # Tablas + RLS
-  seed.sql                  # Datos de ejemplo (opcional)
+  seed.sql                  # Datos iniciales (los mismos de seed.ts)
 ```
 
 ## Scripts
