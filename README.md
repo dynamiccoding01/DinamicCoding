@@ -22,9 +22,9 @@ Este repo es el **sitio público** (visibilidad y consulta):
   formulario de contacto.
 - **No** administra contenido.
 
-La **administración** (agregar/editar proyectos y equipo, kardex, movimientos,
-listado de consultas) vive en un **proyecto aparte** que comparte la misma base
-de datos Supabase.
+La **administración** (agregar/editar proyectos y equipo, gestionar las
+consultas) vive en un **proyecto aparte** que comparte la misma base de datos
+Supabase. Los scripts SQL de ambos proyectos están aquí, en `supabase/`.
 
 ## Empezar
 
@@ -95,8 +95,9 @@ public/
   brand/                    # Logo (PNG transparente)
   images/proyectos/         # Capturas de los proyectos
 supabase/
-  schema.sql                # Tablas + RLS
-  seed.sql                  # Datos iniciales (los mismos de seed.ts)
+  schema.sql                # 1) Tablas, RLS y límites del sitio público
+  seed.sql                  # 2) Datos iniciales (los mismos de seed.ts)
+  admin.sql                 # 3) Capa del panel de administración (otro repo)
 ```
 
 ## Scripts

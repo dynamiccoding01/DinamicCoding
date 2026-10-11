@@ -50,10 +50,15 @@ con un proyecto de administración separado (aún no creado):
 
 - Aquí: se LEEN `projects` y `team_members`; solo se INSERTA en `inquiries`
   (formulario de contacto). Clave `anon`, protegida por RLS.
-- Proyecto admin (otro repo, con `service_role`): alta de personal con roles,
-  proyectos, consultas, promotores y kardex. No agregar administración aquí.
+- Proyecto admin (otro repo): alta de personal con roles, proyectos y
+  consultas. Entra con Supabase Auth y NO usa `service_role`: la base decide
+  qué puede hacer cada sesión. No agregar administración aquí.
 
-Cambiar una tabla afecta a ambos proyectos.
+Cambiar una tabla afecta a ambos proyectos. **Los scripts de la base de datos
+de los dos proyectos viven en este repo**, en `supabase/`, y se ejecutan en
+este orden: `schema.sql` → `seed.sql` → `admin.sql`. `schema.sql` retira los
+permisos de los usuarios con sesión, así que cada vez que se ejecute hay que
+ejecutar `admin.sql` después.
 
 ## Datos
 
@@ -95,6 +100,16 @@ Cambiar una tabla afecta a ambos proyectos.
 - RLS: lectura pública de `projects`/`team_members`; solo INSERT anónimo en
   `inquiries` (nunca SELECT anónimo). `schema.sql` además revoca todo a
   `anon`/`authenticated` y concede solo eso.
+- Visibilidad: el sitio solo recibe proyectos con `is_published` y personas
+  con `is_public` (lo filtra la política RLS, no el código). Al insertar una
+  consulta, un trigger fija `status = 'new'` y `created_at = now()`: el
+  público no puede elegirlos.
+- `supabase/admin.sql` (capa del panel): `private.admin_users` +
+  `private.is_admin()`, políticas de CRUD solo para administradores, campos
+  de gestión en `inquiries` (`assigned_to`, `notes`, `outcome`, `source`),
+  `audit_log` y reglas de subida a `media`. Los tres scripts se probaron
+  juntos en PostgreSQL con los tres tipos de sesión (anónima, con sesión sin
+  permiso, administrador); al cambiarlos hay que volver a probar esa matriz.
 - Imágenes subidas: bucket público `media` de Supabase Storage (lo crea
   `schema.sql`); su URL pública va en `avatar_url` / `cover_image`.
 - Las páginas con datos (y `sitemap.ts`) se prerenderizan en el build y se

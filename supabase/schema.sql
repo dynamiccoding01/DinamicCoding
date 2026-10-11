@@ -2,8 +2,12 @@
 -- Dynamic Coding — Esquema de base de datos (Supabase / PostgreSQL)
 -- ----------------------------------------------------------------------------
 -- Ejecuta este script en:  Supabase → SQL Editor → New query → Run
--- (pensado para un proyecto nuevo; se puede volver a ejecutar sin romper nada,
---  pero no altera tablas que ya existan).
+-- Se puede volver a ejecutar sin romper ni duplicar nada.
+--
+-- Orden de los scripts:  1) schema.sql   2) seed.sql   3) admin.sql
+-- admin.sql añade lo que necesita el panel de administración. Este script
+-- retira los permisos de los usuarios con sesión, así que SIEMPRE que se
+-- vuelva a ejecutar hay que ejecutar admin.sql después.
 --
 -- Este es el sitio PÚBLICO. Con Row Level Security (RLS):
 --   • Cualquiera puede LEER  proyectos y equipo.
@@ -31,8 +35,12 @@ create table if not exists public.projects (
   repo_url     text,
   featured     boolean not null default false,
   sort_order   int not null default 0,
+  is_published boolean not null default true,  -- false = borrador, no sale en el sitio
   created_at   timestamptz not null default now()
 );
+-- Para bases creadas antes de que existiera la columna.
+alter table public.projects
+  add column if not exists is_published boolean not null default true;
 
 create index if not exists projects_sort_idx on public.projects (sort_order);
 
@@ -69,8 +77,12 @@ create table if not exists public.team_members (
   tiktok_url       text,
   featured         boolean not null default false,
   sort_order       int not null default 0,
+  is_public        boolean not null default true,   -- false = no sale en el sitio (ej. promotores)
   created_at       timestamptz not null default now()
 );
+-- Para bases creadas antes de que existiera la columna.
+alter table public.team_members
+  add column if not exists is_public boolean not null default true;
 
 create index if not exists team_members_sort_idx on public.team_members (sort_order);
 
@@ -131,6 +143,31 @@ create trigger inquiries_rate_limit
   before insert on public.inquiries
   for each row execute function private.inquiries_rate_limit();
 
+-- ---------- Consultas: valores que quien envía no puede elegir --------------
+-- Quien envía una consulta por la API no decide su estado ni su fecha: sin
+-- esto podría mandarla ya «cerrada» o con fecha antigua para saltarse el
+-- límite de frecuencia. (El SQL Editor y service_role no pasan por aquí.)
+create or replace function private.inquiries_force_defaults()
+returns trigger
+language plpgsql
+set search_path = ''
+as $$
+begin
+  if current_user in ('anon', 'authenticated') then
+    new.status := 'new';
+    new.created_at := now();
+  end if;
+  return new;
+end;
+$$;
+
+-- Se llama «a_…» para ejecutarse antes que inquiries_rate_limit (los triggers
+-- de un mismo tipo corren en orden alfabético).
+drop trigger if exists a_inquiries_force_defaults on public.inquiries;
+create trigger a_inquiries_force_defaults
+  before insert on public.inquiries
+  for each row execute function private.inquiries_force_defaults();
+
 -- ============================================================================
 -- Row Level Security
 -- ============================================================================
@@ -138,19 +175,19 @@ alter table public.projects     enable row level security;
 alter table public.team_members enable row level security;
 alter table public.inquiries    enable row level security;
 
--- Proyectos: lectura pública
+-- Proyectos: lectura pública de los publicados (los borradores no salen)
 drop policy if exists "public read projects" on public.projects;
 create policy "public read projects"
   on public.projects for select
   to anon, authenticated
-  using (true);
+  using (is_published);
 
--- Equipo: lectura pública
+-- Equipo: lectura pública de quienes están marcados como visibles
 drop policy if exists "public read team" on public.team_members;
 create policy "public read team"
   on public.team_members for select
   to anon, authenticated
-  using (true);
+  using (is_public);
 
 -- Consultas: cualquiera puede INSERTAR, nadie puede LEER de forma anónima.
 drop policy if exists "public insert inquiries" on public.inquiries;
