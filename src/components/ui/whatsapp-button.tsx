@@ -38,7 +38,7 @@ export function WhatsAppFab() {
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Escríbenos por WhatsApp"
-      className="wa-pulse fixed bottom-5 right-5 z-40 inline-flex h-14 w-14 items-center justify-center rounded-full bg-whatsapp text-white shadow-lg transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-whatsapp focus-visible:ring-offset-2"
+      className="wa-pulse no-print fixed bottom-5 right-5 z-40 inline-flex h-14 w-14 items-center justify-center rounded-full bg-whatsapp text-white shadow-lg transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-whatsapp focus-visible:ring-offset-2"
     >
       <WhatsAppIcon size={28} />
     </a>

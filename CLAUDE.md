@@ -68,6 +68,20 @@ Cambiar una tabla afecta a ambos proyectos.
 - Personal: `team_members.role` es el cargo visible y `roles` (text[]) los
   roles que cumple (`desarrollador`, `consultor`, `promotor`…); las etiquetas
   están en `src/lib/roles.ts`.
+- Perfil estilo CV (`/equipo/[slug]`): `experience`, `education` y
+  `certifications` son columnas jsonb con listas (forma en `types.ts`),
+  `project_slugs` enlaza con `projects`, `available` muestra «Disponible para
+  consultas». Cada sección se pinta solo si tiene datos; los datos los cargará
+  el dueño desde el panel de administración, no desde este repo.
+  `normalizeMember()` en `data.ts` descarta entradas incompletas en vez de
+  romper la página.
+- GitHub: si la persona tiene `github_url`, `src/lib/github.ts` lee sus datos
+  públicos de la API (caché de 1 h, `GITHUB_TOKEN` opcional). Si falla, el
+  bloque no se muestra. LinkedIn y las demás redes son solo enlaces (no
+  tienen API pública utilizable).
+- `/equipo/demo` es un perfil con todas las secciones llenas
+  (`src/lib/demo-profile.ts`) para probar el diseño. Solo existe con
+  `npm run dev`; en producción da 404. Sus datos son inventados a propósito.
 - Formulario: Server Action `submitInquiry` (`src/lib/actions.ts`) con
   `useActionState` en `contact-form.tsx`. `/contacto` solo lo muestra si
   `isSupabaseConfigured()`; sin base de datos queda solo WhatsApp, para no
@@ -91,7 +105,8 @@ Cambiar una tabla afecta a ambos proyectos.
 ### Variables de entorno
 
 `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` (clave
-publishable/anon) y, opcional, `NEXT_PUBLIC_SITE_URL`. La URL pública del
+publishable/anon) y, opcionales, `NEXT_PUBLIC_SITE_URL` y `GITHUB_TOKEN`
+(secreto, solo servidor). La URL pública del
 sitio sale de `src/lib/site.ts` (esa variable →
 `VERCEL_PROJECT_PRODUCTION_URL` → localhost) y la usan `metadataBase`,
 `sitemap.ts` y `robots.ts`. Plantilla versionada en `.env.local.example`
@@ -127,6 +142,9 @@ revisar en el navegador lo que cambie a la vista.
   y los motivos de la marca `.slant` (banda en paralelogramo), `.pin` (línea
   con punto junto a textos de apoyo), `.shape-diagonal` / `.shape-stripe`
   (formas diagonales del hero, cabeceras y llamado final).
+- «Descargar CV» (`print-button.tsx`) abre la impresión del navegador; el
+  formato del PDF es el bloque `@media print` de `globals.css` (oculta
+  navegación, pie y todo lo que lleve `.no-print`, y baja la base de `rem`).
 - Animaciones: `<Reveal>` al hacer scroll, `.type-row` (resaltado que recorre
   la lista del hero, solo CSS), `.float-slow` y `.wa-pulse`. Toda animación
   nueva debe desactivarse en el bloque `prefers-reduced-motion` del final.
@@ -144,10 +162,11 @@ revisar en el navegador lo que cambie a la vista.
 - Portadas de proyecto: capturas de celular con fondo transparente en
   `public/images/proyectos`. `ProjectCard` las ancla arriba y las recorta por
   abajo sobre un panel de marca; el detalle las muestra completas.
-- lucide-react v1.x no trae logos de marca: GitHub/LinkedIn/X/WhatsApp están
-  en `src/components/ui/brand-icons.tsx`.
-- Server Components por defecto; solo son cliente `contact-form`, `navbar` y
-  `reveal`. Combinar clases con `cn()` de `src/lib/utils.ts`.
+- lucide-react v1.x no trae logos de marca: GitHub, LinkedIn, X, WhatsApp,
+  Instagram, Facebook y TikTok están en `src/components/ui/brand-icons.tsx`
+  (paths de Simple Icons).
+- Server Components por defecto; solo son cliente `contact-form`, `navbar`,
+  `reveal` y `print-button`. Combinar clases con `cn()` de `src/lib/utils.ts`.
 - Estructura: `src/components/ui` (primitivas), `sections` (bloques de la
   home, compuestos en `src/app/page.tsx`), `layout` (navbar/footer), y
   `services`/`projects`/`team`/`contact`.

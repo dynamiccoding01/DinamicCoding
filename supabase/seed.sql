@@ -27,12 +27,12 @@ on conflict (slug) do nothing;
 
 -- ---------- Equipo ----------------------------------------------------------
 insert into public.team_members
-  (slug, name, role, roles, headline, bio, skills, location, featured, sort_order)
+  (slug, name, role, roles, headline, bio, skills, location, available, featured, sort_order)
 values
   ('armando-guerrero', 'Armando Guerrero', 'Fundador',
    ARRAY['desarrollador','consultor'],
    'Asesoro y desarrollo páginas web a la medida de cada negocio.',
    'Fundador de Dynamic Coding. Acompaña a cada cliente desde la primera asesoría hasta la publicación de su página web.',
    ARRAY['Páginas web','Tiendas online','Asesoría'],
-   'Santa Cruz de la Sierra, Bolivia', true, 1)
+   'Santa Cruz de la Sierra, Bolivia', true, true, 1)
 on conflict (slug) do nothing;

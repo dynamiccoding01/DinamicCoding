@@ -49,11 +49,24 @@ create table if not exists public.team_members (
   skills           text[] not null default '{}',
   location         text,
   years_experience int,
+  available        boolean not null default false,  -- etiqueta «Disponible para consultas»
+  -- Perfil estilo CV. Listas en JSON; la forma de cada entrada está en
+  -- src/lib/types.ts (ExperienceItem, EducationItem, CertificationItem):
+  --   experience:     [{"title","organization","start","end","description"}]
+  --   education:      [{"title","institution","year"}]
+  --   certifications: [{"name","issuer","year","url"}]
+  experience       jsonb not null default '[]',
+  education        jsonb not null default '[]',
+  certifications   jsonb not null default '[]',
+  project_slugs    text[] not null default '{}',    -- slug de sus proyectos
   email            text,
-  github_url       text,
+  github_url       text,   -- con esto el perfil muestra sus datos de GitHub
   linkedin_url     text,
   website_url      text,
   twitter_url      text,
+  instagram_url    text,
+  facebook_url     text,
+  tiktok_url       text,
   featured         boolean not null default false,
   sort_order       int not null default 0,
   created_at       timestamptz not null default now()

@@ -1,5 +1,12 @@
 import { Globe, Mail } from "lucide-react";
-import { GithubIcon, LinkedinIcon, XIcon } from "@/components/ui/brand-icons";
+import {
+  FacebookIcon,
+  GithubIcon,
+  InstagramIcon,
+  LinkedinIcon,
+  TiktokIcon,
+  XIcon,
+} from "@/components/ui/brand-icons";
 import { cn } from "@/lib/utils";
 import type { TeamMember } from "@/lib/types";
 
@@ -16,6 +23,12 @@ function buildLinks(member: TeamMember): LinkDef[] {
       label: "LinkedIn",
       Icon: LinkedinIcon,
     });
+  if (member.instagram_url)
+    links.push({ href: member.instagram_url, label: "Instagram", Icon: InstagramIcon });
+  if (member.facebook_url)
+    links.push({ href: member.facebook_url, label: "Facebook", Icon: FacebookIcon });
+  if (member.tiktok_url)
+    links.push({ href: member.tiktok_url, label: "TikTok", Icon: TiktokIcon });
   if (member.website_url)
     links.push({ href: member.website_url, label: "Sitio web", Icon: Globe });
   if (member.twitter_url)
@@ -23,6 +36,11 @@ function buildLinks(member: TeamMember): LinkDef[] {
   if (member.email)
     links.push({ href: `mailto:${member.email}`, label: "Email", Icon: Mail });
   return links;
+}
+
+/** `true` si la persona tiene al menos un enlace o red para mostrar. */
+export function hasSocialLinks(member: TeamMember) {
+  return buildLinks(member).length > 0;
 }
 
 export function SocialLinks({

@@ -35,6 +35,37 @@ export interface Project {
   sort_order: number;
 }
 
+/** Un puesto en la trayectoria de la persona (perfil estilo CV). */
+export interface ExperienceItem {
+  /** Cargo, ej: "Desarrollador web" */
+  title: string;
+  /** Empresa u organización */
+  organization: string;
+  /** Inicio, texto libre: "2021" o "Mar 2021" */
+  start: string;
+  /** Fin; `null` significa que sigue ahí ("hoy") */
+  end: string | null;
+  /** Qué hizo o logró, en una o dos líneas (opcional) */
+  description?: string;
+}
+
+/** Un estudio o título. */
+export interface EducationItem {
+  /** Título o carrera */
+  title: string;
+  institution: string;
+  /** Año o periodo, texto libre (opcional) */
+  year?: string;
+}
+
+/** Una certificación, con enlace para verificarla si existe. */
+export interface CertificationItem {
+  name: string;
+  issuer?: string;
+  year?: string;
+  url?: string;
+}
+
 export interface TeamMember {
   id: string;
   slug: string;
@@ -58,12 +89,24 @@ export interface TeamMember {
   location: string | null;
   /** Años de experiencia (opcional) */
   years_experience: number | null;
-  /** Enlaces profesionales */
+  /** Muestra la etiqueta «Disponible para consultas» */
+  available: boolean;
+  /** Trayectoria, de lo más reciente a lo más antiguo */
+  experience: ExperienceItem[];
+  education: EducationItem[];
+  certifications: CertificationItem[];
+  /** `slug` de los proyectos en los que participó (tabla projects) */
+  project_slugs: string[];
+  /** Enlaces profesionales y redes */
   email: string | null;
+  /** Si existe, el perfil muestra además sus datos públicos de GitHub */
   github_url: string | null;
   linkedin_url: string | null;
   website_url: string | null;
   twitter_url: string | null;
+  instagram_url: string | null;
+  facebook_url: string | null;
+  tiktok_url: string | null;
   /** Si se destaca en la portada */
   featured: boolean;
   sort_order: number;

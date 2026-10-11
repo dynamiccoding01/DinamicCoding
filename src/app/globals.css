@@ -162,3 +162,22 @@ summary { list-style: none; }
   .type-row:first-child .type-check { opacity: 1; }
   .card-hover:hover { transform: none; }
 }
+
+/* PDF del perfil del equipo («Descargar CV»): solo el contenido, sin
+   navegación, botones ni pie, y a escala de documento. */
+@media print {
+  @page { margin: 12mm; }
+  /* Todo el sitio usa rem: bajar la base encoge el perfil a tamaño de CV. */
+  html { font-size: 11.5px; }
+  body > header, body > footer, .no-print { display: none !important; }
+  .reveal, .reveal.is-visible { opacity: 1 !important; animation: none !important; }
+  .profile-print {
+    background: #fff !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  /* Los márgenes ya los pone la página. */
+  .profile-print > div { max-width: none; padding: 0 !important; }
+  .profile-print > div > header { margin-top: 0 !important; }
+  .card { box-shadow: none; break-inside: avoid; }
+}
