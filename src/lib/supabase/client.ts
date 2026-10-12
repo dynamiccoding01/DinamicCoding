@@ -6,7 +6,7 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
  * use los datos de ejemplo (modo demo).
  *
  * Este sitio público solo LEE proyectos/equipo e INSERTA consultas, protegido
- * por RLS. La clave anónima es pública por diseño (ver /supabase/schema.sql).
+ * por RLS. La clave anónima es pública por diseño (ver /supabase/base-de-datos.sql).
  */
 let cached: SupabaseClient | null | undefined;
 

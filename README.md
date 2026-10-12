@@ -17,8 +17,8 @@ proyectos y su equipo, y permite cotizar por WhatsApp sin registrarse.
 
 Este repo es el **sitio público** (visibilidad y consulta):
 
-- **Lee** de Supabase: `projects` y `team_members`.
-- **Escribe** en Supabase: inserta en `inquiries` cuando un cliente envía el
+- **Lee** de Supabase: `portafolio` y `equipo`.
+- **Escribe** en Supabase: inserta en `consultas` cuando un cliente envía el
   formulario de contacto.
 - **No** administra contenido.
 
@@ -40,9 +40,9 @@ es solo por WhatsApp: el formulario aparece cuando hay base de datos.
 ## Conectar Supabase
 
 1. Crea un proyecto en [supabase.com](https://supabase.com).
-2. En **SQL Editor**, ejecuta `supabase/schema.sql` (tablas, RLS, límites y
-   anti-spam) y luego `supabase/seed.sql`. Sin datos, las tablas vacías dejan
-   el portafolio y el equipo en blanco.
+2. En **SQL Editor**, pega entero `supabase/base-de-datos.sql` y pulsa Run.
+   Crea las tablas (en español), la seguridad, los límites anti-spam y, en una
+   base nueva, los datos iniciales. La fila del resultado debe decir «bien».
 3. Copia `.env.local.example` a `.env.local` y completa con
    **Project Settings → Data API / API Keys**:
    - `NEXT_PUBLIC_SUPABASE_URL`
@@ -55,16 +55,18 @@ es solo por WhatsApp: el formulario aparece cuando hay base de datos.
 
 Los cambios de contenido en Supabase aparecen en el sitio en ~1 minuto (ISR).
 
-Las fotos del equipo y las capturas de proyectos se suben a **Storage →
-media** (carpeta pública que crea `schema.sql`); la URL pública del archivo se
-pega en `avatar_url` o `cover_image`.
+Las fotos del equipo y las capturas del portafolio se suben a **Storage →
+imagenes** (depósito público que crea el script); la URL pública del archivo
+va en `url_foto` o `imagen_portada`. Lo normal es hacerlo desde el panel de
+administración.
 
 ### Seguridad (RLS)
 
-- Lectura pública de `projects` y `team_members`.
-- Inserción pública en `inquiries`, pero **nadie** puede leerlas de forma
-  anónima (solo el panel admin con `service_role`).
-- `inquiries` tiene límites de tamaño por campo y un límite de frecuencia
+- Lectura pública de `portafolio` (lo publicado) y `equipo` (lo visible).
+- Inserción pública en `consultas`, pero **nadie** puede leerlas de forma
+  anónima: solo las personas del panel cuyo rol tenga ese permiso. El panel
+  no usa la clave `service_role`.
+- `consultas` tiene límites de tamaño por campo y un límite de frecuencia
   (3 consultas por correo y 20 en total cada 10 minutos).
 - A `anon` solo se le concede leer proyectos y equipo e insertar consultas;
   no puede modificar ni borrar nada.
@@ -95,9 +97,7 @@ public/
   brand/                    # Logo (PNG transparente)
   images/proyectos/         # Capturas de los proyectos
 supabase/
-  schema.sql                # 1) Tablas, RLS y límites del sitio público
-  seed.sql                  # 2) Datos iniciales (los mismos de seed.ts)
-  admin.sql                 # 3) Capa del panel de administración (otro repo)
+  base-de-datos.sql         # Toda la base (sitio + panel), en español
 ```
 
 ## Scripts

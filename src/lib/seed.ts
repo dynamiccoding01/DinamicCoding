@@ -4,7 +4,7 @@ import type { Project, TeamMember } from "./types";
  * Datos iniciales del sitio.
  * Se usan automáticamente mientras Supabase no esté configurado. Una vez
  * conectado Supabase, se reemplazan por los de la base de datos (que parte de
- * estos mismos datos: ver /supabase/seed.sql). Ver /src/lib/data.ts
+ * estos mismos datos: ver /supabase/base-de-datos.sql). Ver /src/lib/data.ts
  *
  * Son proyectos y personas reales de la empresa: no agregar datos de relleno.
  */

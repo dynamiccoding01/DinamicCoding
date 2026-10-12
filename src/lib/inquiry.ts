@@ -1,7 +1,7 @@
 /**
  * Límites del formulario de consulta (servidor y `maxLength` del cliente).
- * Deben coincidir con los CHECK de la tabla `inquiries` en
- * supabase/schema.sql.
+ * Deben coincidir con los CHECK de la tabla `consultas` en
+ * supabase/base-de-datos.sql.
  */
 export const INQUIRY_LIMITS = {
   name: { min: 2, max: 120 },

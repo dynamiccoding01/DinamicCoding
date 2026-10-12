@@ -14,22 +14,59 @@ import type {
  * Si Supabase está configurado, lee de la base de datos; de lo contrario usa
  * los datos de ejemplo. Ante cualquier error de red/consulta, cae al demo para
  * que el sitio nunca quede en blanco.
+ *
+ * La base de datos está en español (tablas `portafolio` y `equipo`, ver
+ * /supabase/base-de-datos.sql). Aquí, y solo aquí, se traduce cada fila a los
+ * tipos del sitio (`Project`, `TeamMember`).
  */
+
+type Row = Record<string, unknown>;
+
+const text = (v: unknown) => (typeof v === "string" ? v.trim() : "");
+const textOrNull = (v: unknown) => text(v) || null;
+const numberOrNull = (v: unknown) =>
+  typeof v === "number" && Number.isFinite(v) ? v : null;
+const strings = (v: unknown) =>
+  Array.isArray(v) ? v.map(text).filter(Boolean) : [];
+const objects = (v: unknown): Row[] =>
+  Array.isArray(v) ? v.filter((x) => x && typeof x === "object") : [];
+
+/** Fila de `portafolio` → `Project`. */
+function toProject(row: Row): Project {
+  return {
+    id: text(row.id),
+    slug: text(row.ruta),
+    title: text(row.titulo),
+    summary: text(row.resumen),
+    description: text(row.descripcion),
+    category: text(row.categoria),
+    client: textOrNull(row.cliente),
+    year: numberOrNull(row.anio),
+    technologies: strings(row.tecnologias),
+    highlights: strings(row.caracteristicas),
+    cover_image: textOrNull(row.imagen_portada),
+    gallery: strings(row.galeria),
+    demo_url: textOrNull(row.url_demo),
+    repo_url: textOrNull(row.url_repositorio),
+    featured: row.destacado === true,
+    sort_order: numberOrNull(row.orden) ?? 0,
+  };
+}
 
 export async function getProjects(): Promise<Project[]> {
   const supabase = getSupabase();
   if (!supabase) return seedProjects;
 
   const { data, error } = await supabase
-    .from("projects")
+    .from("portafolio")
     .select("*")
-    .order("sort_order", { ascending: true });
+    .order("orden", { ascending: true });
 
   if (error || !data) {
     console.warn("[data] getProjects → usando datos iniciales:", error?.message);
     return seedProjects;
   }
-  return data as Project[];
+  return (data as Row[]).map(toProject);
 }
 
 export async function getFeaturedProjects(): Promise<Project[]> {
@@ -43,29 +80,22 @@ export async function getProjectBySlug(slug: string): Promise<Project | null> {
   if (!supabase) return seedProjects.find((p) => p.slug === slug) ?? null;
 
   const { data, error } = await supabase
-    .from("projects")
+    .from("portafolio")
     .select("*")
-    .eq("slug", slug)
+    .eq("ruta", slug)
     .maybeSingle();
 
   if (error) {
     console.warn("[data] getProjectBySlug → usando datos iniciales:", error.message);
     return seedProjects.find((p) => p.slug === slug) ?? null;
   }
-  return (data as Project | null) ?? null;
+  return data ? toProject(data as Row) : null;
 }
 
-const text = (v: unknown) => (typeof v === "string" ? v.trim() : "");
-const strings = (v: unknown) =>
-  Array.isArray(v) ? v.map(text).filter(Boolean) : [];
-const objects = (v: unknown): Record<string, unknown>[] =>
-  Array.isArray(v) ? v.filter((x) => x && typeof x === "object") : [];
-
 /**
- * Deja una fila de `team_members` con la forma de `TeamMember`. Las columnas
- * jsonb (experience, education, certifications) las escribe una persona desde
- * el panel, así que las entradas incompletas se descartan en vez de romper la
- * página; lo mismo si faltan columnas que el perfil espera.
+ * Deja un `TeamMember` listo para mostrar. Las listas del perfil (experience,
+ * education, certifications) las escribe una persona desde el panel, así que
+ * las entradas incompletas se descartan en vez de romper la página.
  */
 function normalizeMember(row: TeamMember): TeamMember {
   const experience: ExperienceItem[] = objects(row.experience)
@@ -108,20 +138,72 @@ function normalizeMember(row: TeamMember): TeamMember {
   };
 }
 
+/**
+ * Fila de `equipo` → `TeamMember`. Las listas JSON también están en español:
+ *   experiencia:     [{cargo, organizacion, inicio, fin, descripcion}]
+ *   formacion:       [{titulo, institucion, anio}]
+ *   certificaciones: [{nombre, emisor, anio, url}]
+ */
+function toMember(row: Row): TeamMember {
+  return normalizeMember({
+    id: text(row.id),
+    slug: text(row.ruta),
+    name: text(row.nombre),
+    role: text(row.cargo),
+    roles: strings(row.funciones),
+    headline: text(row.frase),
+    bio: text(row.biografia),
+    avatar_url: textOrNull(row.url_foto),
+    skills: strings(row.habilidades),
+    location: textOrNull(row.ubicacion),
+    years_experience: numberOrNull(row.anios_experiencia),
+    available: row.disponible === true,
+    experience: objects(row.experiencia).map((e) => ({
+      title: text(e.cargo),
+      organization: text(e.organizacion),
+      start: text(e.inicio),
+      end: textOrNull(e.fin),
+      description: text(e.descripcion) || undefined,
+    })),
+    education: objects(row.formacion).map((e) => ({
+      title: text(e.titulo),
+      institution: text(e.institucion),
+      year: text(e.anio) || undefined,
+    })),
+    certifications: objects(row.certificaciones).map((c) => ({
+      name: text(c.nombre),
+      issuer: text(c.emisor) || undefined,
+      year: text(c.anio) || undefined,
+      url: text(c.url) || undefined,
+    })),
+    project_slugs: strings(row.rutas_portafolio),
+    email: textOrNull(row.correo),
+    github_url: textOrNull(row.url_github),
+    linkedin_url: textOrNull(row.url_linkedin),
+    website_url: textOrNull(row.url_sitio_web),
+    twitter_url: textOrNull(row.url_twitter),
+    instagram_url: textOrNull(row.url_instagram),
+    facebook_url: textOrNull(row.url_facebook),
+    tiktok_url: textOrNull(row.url_tiktok),
+    featured: row.destacado === true,
+    sort_order: numberOrNull(row.orden) ?? 0,
+  });
+}
+
 export async function getTeam(): Promise<TeamMember[]> {
   const supabase = getSupabase();
   if (!supabase) return seedTeam.map(normalizeMember);
 
   const { data, error } = await supabase
-    .from("team_members")
+    .from("equipo")
     .select("*")
-    .order("sort_order", { ascending: true });
+    .order("orden", { ascending: true });
 
   if (error || !data) {
     console.warn("[data] getTeam → usando datos iniciales:", error?.message);
     return seedTeam.map(normalizeMember);
   }
-  return (data as TeamMember[]).map(normalizeMember);
+  return (data as Row[]).map(toMember);
 }
 
 export async function getTeamMemberBySlug(
@@ -141,9 +223,9 @@ export async function getTeamMemberBySlug(
   if (!supabase) return fromSeed();
 
   const { data, error } = await supabase
-    .from("team_members")
+    .from("equipo")
     .select("*")
-    .eq("slug", slug)
+    .eq("ruta", slug)
     .maybeSingle();
 
   if (error) {
@@ -153,5 +235,5 @@ export async function getTeamMemberBySlug(
     );
     return fromSeed();
   }
-  return data ? normalizeMember(data as TeamMember) : null;
+  return data ? toMember(data as Row) : null;
 }

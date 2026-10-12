@@ -1,6 +1,6 @@
 /**
  * Roles del personal. En la base de datos se guardan como texto en
- * `team_members.roles`; aquí se traducen a la etiqueta que ve el visitante.
+ * `equipo.funciones`; aquí se traducen a la etiqueta que ve el visitante.
  */
 const ROLE_LABELS: Record<string, string> = {
   fundador: "Fundador",

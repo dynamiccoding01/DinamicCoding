@@ -1,6 +1,6 @@
 /**
  * Tipos de dominio del sitio público de Dynamic Coding.
- * Reflejan las tablas de Supabase (ver /supabase/schema.sql).
+ * Reflejan las tablas de Supabase (ver /supabase/base-de-datos.sql).
  */
 
 export interface Project {

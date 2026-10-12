@@ -23,7 +23,7 @@ function str(formData: FormData, key: string) {
 
 /**
  * Recibe el formulario público de consulta, valida y lo guarda en Supabase
- * (tabla `inquiries`). Estas consultas se administran desde el proyecto de
+ * (tabla `consultas`). Estas consultas se administran desde el proyecto de
  * administración. Si Supabase aún no está configurado, responde en modo demo.
  */
 export async function submitInquiry(
@@ -80,17 +80,18 @@ export async function submitInquiry(
     };
   }
 
-  const { error } = await supabase.from("inquiries").insert({
-    name,
-    email,
-    company: company || null,
-    phone: phone || null,
-    subject: subject || null,
-    message,
+  // La base de datos está en español (tabla `consultas`).
+  const { error } = await supabase.from("consultas").insert({
+    nombre: name,
+    correo: email,
+    empresa: company || null,
+    telefono: phone || null,
+    asunto: subject || null,
+    mensaje: message,
   });
 
   if (error) {
-    // PT429: límite de envíos por correo (trigger en supabase/schema.sql).
+    // PT429: límite de envíos por correo (trigger en supabase/base-de-datos.sql).
     if (error.code === "PT429") {
       return {
         status: "error",

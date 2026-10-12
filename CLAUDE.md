@@ -48,17 +48,18 @@ teléfonos, correos). Lo que no se sabe se omite y se le pregunta al dueño.
 Este repo es SOLO el sitio público. Comparte la MISMA base de datos Supabase
 con un proyecto de administración separado (aún no creado):
 
-- Aquí: se LEEN `projects` y `team_members`; solo se INSERTA en `inquiries`
+- Aquí: se LEEN `portafolio` y `equipo`; solo se INSERTA en `consultas`
   (formulario de contacto). Clave `anon`, protegida por RLS.
-- Proyecto admin (otro repo): alta de personal con roles, proyectos y
-  consultas. Entra con Supabase Auth y NO usa `service_role`: la base decide
+- Proyecto admin (otro repo, `dynamiccoding01/DinamicCodingAdmin`): sistema de
+  clientes, proyectos, reuniones, cambios y pagos, con usuarios, roles y
+  permisos. Entra con Supabase Auth y NO usa `service_role`: la base decide
   qué puede hacer cada sesión. No agregar administración aquí.
 
-Cambiar una tabla afecta a ambos proyectos. **Los scripts de la base de datos
-de los dos proyectos viven en este repo**, en `supabase/`, y se ejecutan en
-este orden: `schema.sql` → `seed.sql` → `admin.sql`. `schema.sql` retira los
-permisos de los usuarios con sesión, así que cada vez que se ejecute hay que
-ejecutar `admin.sql` después.
+**La base de datos está en español** (tablas, columnas y valores). Cambiar una
+tabla afecta a ambos proyectos. El script de la base de los dos proyectos vive
+en este repo: `supabase/base-de-datos.sql`, un solo archivo que se pega entero
+en el SQL Editor. Sirve para una base nueva y para actualizar la existente, y
+se puede volver a ejecutar sin romper ni duplicar nada.
 
 ## Datos
 
@@ -66,18 +67,27 @@ ejecutar `admin.sql` después.
   (`src/lib/supabase/client.ts`) devuelve `null` si faltan las env vars y
   entonces se usan `seedProjects`/`seedTeam`. Cualquier error de consulta
   también cae a esos datos con un `console.warn("[data] …")`.
+- **Traducción en un solo lugar:** los tipos del sitio (`Project`,
+  `TeamMember` en `types.ts`) siguen con nombres en inglés; `toProject()` y
+  `toMember()` en `data.ts` convierten cada fila en español a esos tipos.
+  Ningún componente conoce los nombres de las columnas. Equivalencias que más
+  se usan: `ruta` = slug, `orden` = sort_order, `destacado` = featured,
+  `caracteristicas` = highlights, `funciones` = roles, `cargo` = role.
 - Si Supabase está conectado pero las tablas están vacías, el sitio se ve
-  vacío: por eso `supabase/seed.sql` carga los mismos datos que `seed.ts`.
+  vacío: por eso el script carga, en una base recién creada, los mismos datos
+  que `seed.ts`.
 - Mantener sincronizados: `src/lib/types.ts` ↔ `src/lib/seed.ts` ↔
-  `supabase/schema.sql` (tablas + RLS) ↔ `supabase/seed.sql`.
-- Personal: `team_members.role` es el cargo visible y `roles` (text[]) los
-  roles que cumple (`desarrollador`, `consultor`, `promotor`…); las etiquetas
-  están en `src/lib/roles.ts`.
-- Perfil estilo CV (`/equipo/[slug]`): `experience`, `education` y
-  `certifications` son columnas jsonb con listas (forma en `types.ts`),
-  `project_slugs` enlaza con `projects`, `available` muestra «Disponible para
-  consultas». Cada sección se pinta solo si tiene datos; los datos los cargará
-  el dueño desde el panel de administración, no desde este repo.
+  `src/lib/data.ts` (traducción) ↔ `supabase/base-de-datos.sql`.
+- Personal: `equipo.cargo` es el cargo visible y `funciones` (text[]) lo que
+  cumple en la empresa (`desarrollador`, `consultor`, `promotor`…); las
+  etiquetas están en `src/lib/roles.ts`. No confundir con la tabla `roles`,
+  que son los roles de acceso al panel.
+- Perfil estilo CV (`/equipo/[slug]`): `experiencia`, `formacion` y
+  `certificaciones` son columnas jsonb con listas y claves en español
+  (`cargo`, `organizacion`, `inicio`, `fin`…; sin `fin` = hoy),
+  `rutas_portafolio` enlaza con `portafolio`, `disponible` muestra «Disponible
+  para consultas». Cada sección se pinta solo si tiene datos; los datos los
+  carga el dueño desde el panel de administración, no desde este repo.
   `normalizeMember()` en `data.ts` descarta entradas incompletas en vez de
   romper la página.
 - GitHub: si la persona tiene `github_url`, `src/lib/github.ts` lee sus datos
@@ -94,24 +104,29 @@ ejecutar `admin.sql` después.
   form los repone vía `defaultValue` (React 19 vacía el form tras cada
   acción; el `<select>` además necesita `key` para remontarse).
 - Límites de las consultas: `src/lib/inquiry.ts` (servidor + `maxLength`) debe
-  coincidir con los CHECK de `inquiries` en `supabase/schema.sql`. Un trigger
-  (`private.inquiries_rate_limit`) limita la frecuencia de envíos y responde
-  con el código `PT429`, que `actions.ts` traduce a un mensaje amable.
-- RLS: lectura pública de `projects`/`team_members`; solo INSERT anónimo en
-  `inquiries` (nunca SELECT anónimo). `schema.sql` además revoca todo a
-  `anon`/`authenticated` y concede solo eso.
-- Visibilidad: el sitio solo recibe proyectos con `is_published` y personas
-  con `is_public` (lo filtra la política RLS, no el código). Al insertar una
-  consulta, un trigger fija `status = 'new'` y `created_at = now()`: el
-  público no puede elegirlos.
-- `supabase/admin.sql` (capa del panel): `private.admin_users` +
-  `private.is_admin()`, políticas de CRUD solo para administradores, campos
-  de gestión en `inquiries` (`assigned_to`, `notes`, `outcome`, `source`),
-  `audit_log` y reglas de subida a `media`. Los tres scripts se probaron
-  juntos en PostgreSQL con los tres tipos de sesión (anónima, con sesión sin
-  permiso, administrador); al cambiarlos hay que volver a probar esa matriz.
-- Imágenes subidas: bucket público `media` de Supabase Storage (lo crea
-  `schema.sql`); su URL pública va en `avatar_url` / `cover_image`.
+  coincidir con los CHECK de `consultas` en `supabase/base-de-datos.sql`. Un
+  trigger (`privado.consultas_limite_frecuencia`) limita la frecuencia de
+  envíos y responde con el código `PT429`, que `actions.ts` traduce a un
+  mensaje amable.
+- RLS: lectura pública de `portafolio`/`equipo`; solo INSERT anónimo en
+  `consultas` (nunca SELECT anónimo). El script revoca todo a
+  `anon`/`authenticated` y concede solo lo necesario.
+- Visibilidad: el sitio solo recibe portafolio con `publicado` y personas con
+  `visible` (lo filtra la política RLS, no el código). Al insertar una
+  consulta, un trigger fija `estado = 'nueva'` y `creado_en = now()`, y otro
+  vacía los campos de gestión: el público no puede elegirlos.
+- Lo del panel, en el mismo script: `clientes`, `proyectos` (el trabajo
+  privado, distinto de `portafolio`), `reuniones`, `cambios`, `pagos`,
+  `detalle_pago`, `usuarios`, `roles`, `permisos`, `rol_permiso` e
+  `historial`. Cada operación exige el permiso del rol
+  (`privado.tiene_permiso('modulo.accion')`) y un usuario activo; usuarios,
+  roles y permisos solo los gestiona el superadmin. El script se probó en
+  PostgreSQL (PGlite) simulando visitante, cuentas sin acceso, promotor,
+  consultor, administrador y superadmin; al cambiarlo hay que volver a probar
+  esa matriz.
+- Imágenes subidas: depósito público `imagenes` de Supabase Storage (lo crea
+  el script), con carpetas `equipo/` y `portafolio/`; su URL pública va en
+  `url_foto` / `imagen_portada`.
 - Las páginas con datos (y `sitemap.ts`) se prerenderizan en el build y se
   regeneran con ISR (`export const revalidate = 60`; `cacheComponents`
   desactivado). Una página nueva que lea de `data.ts` debe exportar lo mismo.
