@@ -22,6 +22,11 @@ export interface ServiceType {
   idealFor: string[];
   /** Qué quiere el cliente cuando le conviene este tipo (guía de asesoría). */
   need: string;
+  /**
+   * Partes principales de este tipo de página, en el orden de los números de
+   * su maqueta (`src/components/services/service-mockup.tsx`).
+   */
+  parts: { title: string; text: string }[];
 }
 
 export const serviceTypes: ServiceType[] = [
@@ -39,6 +44,12 @@ export const serviceTypes: ServiceType[] = [
       "Lanzamiento de productos",
     ],
     need: "Promocionar una oferta, una campaña o un lanzamiento.",
+    parts: [
+      { title: "Título que engancha", text: "Dice en una frase qué ofreces y por qué elegirte." },
+      { title: "Un solo botón de acción", text: "Lleva al visitante a escribirte por WhatsApp, sin distracciones." },
+      { title: "Beneficios", text: "Las razones para elegirte, claras y en pocas palabras." },
+      { title: "Confianza", text: "Opiniones, fotos o resultados que respaldan lo que ofreces." },
+    ],
   },
   {
     slug: "pagina-informativa",
@@ -54,6 +65,12 @@ export const serviceTypes: ServiceType[] = [
       "Facilitar el contacto empresarial",
     ],
     need: "Que te encuentren y sepan qué haces, dónde estás y cómo contactarte.",
+    parts: [
+      { title: "Quiénes son", text: "Tu negocio y lo que haces, explicado en pocas líneas." },
+      { title: "Horarios", text: "Cuándo atiendes, siempre a la vista." },
+      { title: "Ubicación", text: "Un mapa para que te encuentren sin perderse." },
+      { title: "Contacto", text: "Botones para llamarte o escribirte por WhatsApp." },
+    ],
   },
   {
     slug: "pagina-corporativa",
@@ -68,6 +85,12 @@ export const serviceTypes: ServiceType[] = [
       "Aumentar la credibilidad de la marca",
     ],
     need: "Mostrar trayectoria, equipo y proyectos para ganar credibilidad.",
+    parts: [
+      { title: "Secciones claras", text: "Empresa, servicios, equipo, proyectos y contacto, cada uno en su lugar." },
+      { title: "Servicios", text: "Lo que ofrece la empresa, explicado con claridad." },
+      { title: "Equipo", text: "Las personas que hay detrás de la empresa." },
+      { title: "Trayectoria y proyectos", text: "Lo que ya hicieron, para ganar credibilidad." },
+    ],
   },
   {
     slug: "catalogo-digital",
@@ -83,6 +106,12 @@ export const serviceTypes: ServiceType[] = [
       "Negocios con gran variedad de productos",
     ],
     need: "Exhibir muchos productos y recibir pedidos por WhatsApp.",
+    parts: [
+      { title: "Buscador", text: "Para encontrar un producto en segundos." },
+      { title: "Categorías", text: "Los productos ordenados para recorrerlos fácil." },
+      { title: "Fichas de producto", text: "Foto, nombre y detalles de cada producto." },
+      { title: "Pedido por WhatsApp", text: "El cliente consulta o pide el producto con un toque." },
+    ],
   },
   {
     slug: "tienda-online",
@@ -98,6 +127,12 @@ export const serviceTypes: ServiceType[] = [
       "Aumentar las ventas las 24 horas",
     ],
     need: "Vender y cobrar por internet, con pedidos automáticos.",
+    parts: [
+      { title: "Productos con precio", text: "Cada producto con su foto, su precio y un botón para agregarlo." },
+      { title: "Carrito", text: "El cliente junta lo que quiere comprar." },
+      { title: "Pago en línea", text: "Paga por internet al terminar su compra." },
+      { title: "Pedidos", text: "Cada compra queda registrada para que la gestiones." },
+    ],
   },
   {
     slug: "pagina-de-reservas",
@@ -113,6 +148,12 @@ export const serviceTypes: ServiceType[] = [
       "Gestión de citas y reservas",
     ],
     need: "Atender con cita o con reserva.",
+    parts: [
+      { title: "Servicios", text: "El cliente elige qué quiere reservar." },
+      { title: "Calendario", text: "Ve qué días hay disponibles." },
+      { title: "Horarios libres", text: "Escoge la hora que le conviene." },
+      { title: "Confirmación", text: "Confirma su reserva y queda agendada." },
+    ],
   },
   {
     slug: "pagina-web-personalizada",
@@ -128,6 +169,12 @@ export const serviceTypes: ServiceType[] = [
       "Soluciones a medida",
     ],
     need: "Algo que no encaja en lo anterior, o automatizar un proceso propio.",
+    parts: [
+      { title: "Pantallas a medida", text: "Pensadas para la forma en que trabaja tu negocio." },
+      { title: "Datos e indicadores", text: "La información que necesitas, siempre a la vista." },
+      { title: "Procesos automáticos", text: "Las tareas repetitivas las hace el sistema." },
+      { title: "Usuarios y permisos", text: "Cada persona ve y hace solo lo que le corresponde." },
+    ],
   },
 ];
 

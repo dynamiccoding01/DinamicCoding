@@ -21,7 +21,7 @@ export default async function ProjectsPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Proyectos"
+        breadcrumb="Proyectos"
         title="Páginas que ya están funcionando"
         subtitle="Cada proyecto responde a un objetivo distinto. Entra en cualquiera para ver de qué se trata."
       />

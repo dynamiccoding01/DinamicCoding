@@ -21,7 +21,7 @@ export default async function TeamPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Equipo"
+        breadcrumb="Equipo"
         title="Las personas que te atienden"
         subtitle="Aquí sabes con quién hablas. Entra en cada perfil para conocer su rol y su experiencia."
       />

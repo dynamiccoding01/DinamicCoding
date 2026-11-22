@@ -1,14 +1,18 @@
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Container } from "@/components/ui/container";
-import { Eyebrow } from "@/components/ui/section-heading";
 
-/** Cabecera de páginas interiores: título y descripción sobre banda clara. */
+/**
+ * Cabecera de páginas interiores: migas de pan, título y descripción sobre
+ * banda clara.
+ */
 export function PageHeader({
-  eyebrow,
+  breadcrumb,
   title,
   subtitle,
   children,
 }: {
-  eyebrow?: string;
+  /** Nombre de la página en las migas de pan: «Inicio / {breadcrumb}». */
+  breadcrumb: string;
   title: string;
   subtitle?: string;
   /** Contenido extra bajo el subtítulo (botones, enlaces). */
@@ -26,8 +30,8 @@ export function PageHeader({
         className="shape-stripe pointer-events-none absolute bottom-0 right-10 top-0 hidden w-[26rem] bg-brand-200/60 md:block"
       />
       <Container className="relative py-14 sm:py-16">
-        {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
-        <h1 className="mt-2 max-w-3xl text-balance font-display text-4xl font-extrabold tracking-tight text-navy sm:text-5xl">
+        <Breadcrumbs items={[{ label: breadcrumb }]} />
+        <h1 className="mt-4 max-w-3xl text-balance font-display text-4xl font-extrabold tracking-tight text-navy sm:text-5xl">
           {title}
         </h1>
         {subtitle && (

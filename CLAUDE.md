@@ -36,9 +36,12 @@ No agregar datos de relleno (cifras, testimonios, personas, proyectos,
 teléfonos, correos). Lo que no se sabe se omite y se le pregunta al dueño.
 
 - `src/lib/services.ts` — catálogo fijo: los siete tipos de página (`qué es`,
-  `ideal para`, `need`) y los cinco públicos. Sale de las piezas gráficas de
-  la marca; no vive en Supabase. Alimenta el hero, la grilla, la guía «¿Qué
-  página necesita tu negocio?», `/servicios/[slug]`, el pie y el formulario.
+  `ideal para`, `need`, `parts`) y los cinco públicos. Sale de las piezas
+  gráficas de la marca; no vive en Supabase. Alimenta el hero, la grilla, la
+  guía «¿Qué página necesita tu negocio?», `/servicios/[slug]`, el pie y el
+  formulario. `parts` (partes principales de cada tipo) son textos generales
+  escritos para el sitio, no datos de clientes, y van en el orden de los
+  números de su maqueta.
 - `src/lib/contact.ts` — WhatsApp, ciudad y `whatsappUrl(mensaje)`. Todo
   enlace a WhatsApp sale de ahí (`<WhatsAppButton>`, `<WhatsAppFab>`).
 - `src/lib/seed.ts` — proyectos y personas reales con los que arranca el
@@ -200,8 +203,9 @@ revisar en el navegador lo que cambie a la vista.
   formato del PDF es el bloque `@media print` de `globals.css` (oculta
   navegación, pie y todo lo que lleve `.no-print`, y baja la base de `rem`).
 - Animaciones: `<Reveal>` al hacer scroll, `.type-row` (resaltado que recorre
-  la lista del hero, solo CSS), `.float-slow` y `.wa-pulse`. Toda animación
-  nueva debe desactivarse en el bloque `prefers-reduced-motion` del final.
+  la lista del hero, solo CSS), `.float-slow`, `.wa-pulse` y
+  `.mock-piece`/`.mock-marker` (maquetas). Toda animación nueva debe
+  desactivarse en el bloque `prefers-reduced-motion` del final.
 - `<Reveal>` (`src/components/ui/reveal.tsx`): `.reveal.is-visible` debe
   mantener `opacity: 1` explícito (no solo vía la animación) y el fallback de
   800 ms, o el contenido queda invisible en pestañas en segundo plano.
@@ -216,6 +220,18 @@ revisar en el navegador lo que cambie a la vista.
 - Portadas de proyecto: capturas de celular con fondo transparente en
   `public/images/proyectos`. `ProjectCard` las ancla arriba y las recorta por
   abajo sobre un panel de marca; el detalle las muestra completas.
+- Maquetas de los tipos de página (`src/components/services/service-mockup.tsx`):
+  SVG dibujado con código y los tokens de color, uno por `slug` (`SCREENS`).
+  `ServiceCard` la muestra quieta sobre un panel de marca, como las portadas
+  de proyecto; en `/servicios/[slug]` (`detailed`) se arma pieza por pieza y
+  numera sus partes (`MARKERS`, en el orden de `parts`). Es ilustrativa y lo
+  dice: no presentarla como un proyecto real. En una pestaña oculta la
+  animación espera a que la página se vea: para revisarla con capturas, sacar
+  una y otra 2–3 s después.
+- Migas de pan: `<Breadcrumbs>` (`src/components/ui/breadcrumbs.tsx`) sobre
+  el título de toda página interior; «Inicio» se agrega solo y el último
+  elemento es la página actual. `PageHeader` las arma con su prop
+  `breadcrumb`; las páginas de detalle las ponen a mano.
 - lucide-react v1.x no trae logos de marca: GitHub, LinkedIn, X, WhatsApp,
   Instagram, Facebook y TikTok están en `src/components/ui/brand-icons.tsx`
   (paths de Simple Icons).

@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, ArrowRight, CheckCircle2 } from "lucide-react";
+import { ArrowRight, CheckCircle2 } from "lucide-react";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Container } from "@/components/ui/container";
 import { Eyebrow } from "@/components/ui/section-heading";
 import { WhatsAppButton } from "@/components/ui/whatsapp-button";
 import { ProjectGrid } from "@/components/projects/project-card";
+import { ServiceMockup } from "@/components/services/service-mockup";
 import { CTA } from "@/components/sections/cta";
 import { getProjects } from "@/lib/data";
 import { getServiceType, serviceTypes } from "@/lib/services";
@@ -58,35 +60,74 @@ export default async function ServiceDetailPage({
           aria-hidden
           className="shape-stripe pointer-events-none absolute bottom-0 right-10 top-0 hidden w-[26rem] bg-brand-200/60 md:block"
         />
-        <Container className="relative py-12 sm:py-16">
-          <Link
-            href="/servicios"
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-muted transition-colors hover:text-brand-600"
-          >
-            <ArrowLeft size={16} />
-            Todos los servicios
-          </Link>
+        <Container className="relative grid items-center gap-12 py-12 sm:py-16 lg:grid-cols-[1.05fr_0.95fr]">
+          <div>
+            <Breadcrumbs
+              items={[
+                { label: "Servicios", href: "/servicios" },
+                { label: type.title },
+              ]}
+            />
 
-          <div className="mt-7 flex items-center gap-4">
-            <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-navy text-white">
-              <type.Icon size={28} />
-            </span>
-            <Eyebrow>
-              Tipo de página {index + 1} de {serviceTypes.length}
-            </Eyebrow>
+            <div className="mt-7 flex items-center gap-4">
+              <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-navy text-white">
+                <type.Icon size={28} />
+              </span>
+              <Eyebrow>
+                Tipo de página {index + 1} de {serviceTypes.length}
+              </Eyebrow>
+            </div>
+
+            <h1 className="mt-5 text-balance font-display text-4xl font-extrabold tracking-tight text-navy sm:text-5xl">
+              {type.title}
+            </h1>
+            <p className="pin mt-6 max-w-2xl text-pretty text-lg leading-relaxed text-ink-soft">
+              {type.description}
+            </p>
+            <div className="mt-8">
+              <WhatsAppButton message={quoteMessage}>
+                Cotiza tu {type.title.toLowerCase()}
+              </WhatsAppButton>
+            </div>
           </div>
 
-          <h1 className="mt-5 text-balance font-display text-4xl font-extrabold tracking-tight text-navy sm:text-5xl">
-            {type.title}
-          </h1>
-          <p className="pin mt-6 max-w-2xl text-pretty text-lg leading-relaxed text-ink-soft">
-            {type.description}
+          <figure className="mx-auto w-full max-w-md">
+            <ServiceMockup
+              type={type}
+              detailed
+              className="drop-shadow-[0_22px_28px_rgba(6,33,95,0.22)]"
+            />
+            <figcaption className="mt-3 text-center text-xs text-muted">
+              Maqueta ilustrativa
+            </figcaption>
+          </figure>
+        </Container>
+      </section>
+
+      {/* Partes, con los mismos números que la maqueta */}
+      <section className="border-b border-line py-16 sm:py-20">
+        <Container>
+          <h2 className="font-display text-2xl font-extrabold tracking-tight text-navy">
+            Sus partes principales
+          </h2>
+          <p className="mt-2 text-[15px] text-ink-soft">
+            Los números coinciden con los de la maqueta.
           </p>
-          <div className="mt-8">
-            <WhatsAppButton message={quoteMessage}>
-              Cotiza tu {type.title.toLowerCase()}
-            </WhatsAppButton>
-          </div>
+          <ol className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {type.parts.map((part, i) => (
+              <li key={part.title} className="card rounded-2xl p-5">
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-500 font-display text-sm font-bold text-white">
+                  {i + 1}
+                </span>
+                <h3 className="mt-4 font-display text-base font-bold text-navy">
+                  {part.title}
+                </h3>
+                <p className="mt-1.5 text-sm leading-relaxed text-ink-soft">
+                  {part.text}
+                </p>
+              </li>
+            ))}
+          </ol>
         </Container>
       </section>
 
@@ -128,13 +169,21 @@ export default async function ServiceDetailPage({
                 <li key={other.slug}>
                   <Link
                     href={`/servicios/${other.slug}`}
-                    className="group flex items-center gap-3 px-4 py-3 text-sm font-semibold text-ink-soft transition-colors hover:bg-brand-50 hover:text-navy"
+                    className="group flex items-start gap-3 px-4 py-3 transition-colors hover:bg-brand-50"
                   >
-                    <other.Icon size={17} className="shrink-0 text-brand-500" />
-                    <span className="flex-1">{other.title}</span>
+                    <other.Icon size={17} className="mt-0.5 shrink-0 text-brand-500" />
+                    <span className="flex-1">
+                      <span className="block text-sm font-semibold text-ink-soft transition-colors group-hover:text-navy">
+                        {other.title}
+                      </span>
+                      {/* Qué busca quien elige ese tipo: ayuda a comparar. */}
+                      <span className="mt-0.5 block text-xs leading-relaxed text-muted">
+                        {other.need}
+                      </span>
+                    </span>
                     <ArrowRight
                       size={15}
-                      className="text-brand-300 transition-transform group-hover:translate-x-0.5 group-hover:text-brand-500"
+                      className="mt-0.5 shrink-0 text-brand-300 transition-transform group-hover:translate-x-0.5 group-hover:text-brand-500"
                     />
                   </Link>
                 </li>

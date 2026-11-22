@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
-  ArrowLeft,
   ArrowRight,
   Building2,
   Calendar,
@@ -12,6 +11,7 @@ import {
   Tag,
 } from "lucide-react";
 import { GithubIcon } from "@/components/ui/brand-icons";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Container } from "@/components/ui/container";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -82,13 +82,12 @@ export default async function ProjectDetailPage({
       <section className="border-b border-line bg-surface-soft">
         <Container className="grid items-center gap-10 py-12 sm:py-16 lg:grid-cols-[1.15fr_0.85fr]">
           <div>
-            <Link
-              href="/proyectos"
-              className="inline-flex items-center gap-1.5 text-sm font-medium text-muted transition-colors hover:text-brand-600"
-            >
-              <ArrowLeft size={16} />
-              Volver a proyectos
-            </Link>
+            <Breadcrumbs
+              items={[
+                { label: "Proyectos", href: "/proyectos" },
+                { label: project.title },
+              ]}
+            />
 
             <div className="mt-7 flex flex-wrap items-center gap-3">
               <Badge tone="brand">{project.category}</Badge>

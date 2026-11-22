@@ -55,7 +55,7 @@ export default function ContactPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Contacto"
+        breadcrumb="Contacto"
         title="Cotiza tu página web con nosotros"
         subtitle="Cuéntanos qué necesita tu negocio y te asesoramos. No hace falta registrarse."
       />

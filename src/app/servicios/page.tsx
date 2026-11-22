@@ -36,7 +36,7 @@ export default function ServicesPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Servicios"
+        breadcrumb="Servicios"
         title="No todas las páginas web son lo mismo"
         subtitle="Cada negocio necesita un sitio según sus objetivos, su rubro y la forma en que atiende a sus clientes. Estos son los siete tipos de página que desarrollamos."
       />

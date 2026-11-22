@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
-  ArrowLeft,
   ArrowUpRight,
   Briefcase,
   GraduationCap,
@@ -15,6 +14,7 @@ import {
 } from "lucide-react";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Container } from "@/components/ui/container";
 import { WhatsAppButton } from "@/components/ui/whatsapp-button";
 import { GithubCard } from "@/components/team/github-card";
@@ -78,13 +78,12 @@ export default async function TeamMemberPage({
   return (
     <div className="profile-print bg-surface-soft">
       <Container className="py-10 sm:py-14">
-        <Link
-          href="/equipo"
-          className="no-print inline-flex items-center gap-1.5 text-sm font-medium text-muted transition-colors hover:text-brand-600"
-        >
-          <ArrowLeft size={16} />
-          Volver al equipo
-        </Link>
+        <Breadcrumbs
+          items={[
+            { label: "Equipo", href: "/equipo" },
+            { label: member.name },
+          ]}
+        />
 
         {slug === DEMO_SLUG && (
           <p className="no-print mt-5 rounded-xl border border-brand-200 bg-brand-50 px-4 py-3 text-sm text-navy">
