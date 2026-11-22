@@ -11,9 +11,9 @@ Cruz de la Sierra, Bolivia). Su mensaje central es «No todas las páginas web
 son lo mismo»: asesora al cliente y desarrolla uno de siete tipos de página.
 Los clientes nunca se registran; el canal principal de contacto es WhatsApp.
 
-Rutas: inicio, `/servicios` (+ una página por tipo), `/proyectos`, `/equipo`,
-`/contacto`. Next.js 16 (App Router, Turbopack) + React 19 + TypeScript +
-Tailwind v4 + Supabase + lucide-react. Desplegado en Vercel.
+Rutas: inicio, `/servicios`, `/proyectos` y `/equipo` (cada una con su detalle
+`[slug]`), `/contacto`. Next.js 16 (App Router, Turbopack) + React 19 +
+TypeScript + Tailwind v4 + Supabase + lucide-react. Desplegado en Vercel.
 
 Todo el contenido, la UI y los comentarios del código están en español.
 
@@ -23,7 +23,10 @@ Todo el contenido, la UI y los comentarios del código están en español.
   definido como `dev` en `.claude/launch.json` para el preview).
 - `npm run build` / `npm run start` — build de producción y servirlo.
 - `npm run lint` — ESLint (flat config: `core-web-vitals` + `typescript`).
-- `npx tsc --noEmit` — chequeo de tipos.
+- `npx tsc --noEmit` — chequeo de tipos. Usa los tipos de rutas que genera
+  Next en `.next/types` (de ahí sale el global `LayoutProps`; `next-env.d.ts`
+  está en `.gitignore`): en un clon limpio o tras borrar `.next`, correr antes
+  `npx next typegen` (o `npm run dev`/`build`).
 
 No hay framework de tests ni script `test`.
 
@@ -40,26 +43,39 @@ teléfonos, correos). Lo que no se sabe se omite y se le pregunta al dueño.
   enlace a WhatsApp sale de ahí (`<WhatsAppButton>`, `<WhatsAppFab>`).
 - `src/lib/seed.ts` — proyectos y personas reales con los que arranca el
   sitio (Activa Sport, Catálogo Fernández, el fundador).
-- Un proyecto se asocia a un tipo de página cuando `project.category` es
-  igual al `title` del tipo (así aparece en `/servicios/[slug]`).
+- Un proyecto se asocia a un tipo de página cuando `project.category`
+  (`portafolio.categoria`) es igual, letra por letra, al `title` del tipo: así
+  aparece en `/servicios/[slug]` y su detalle enlaza al tipo. Cambiar un
+  `title` en `services.ts` desconecta los proyectos ya cargados.
 
 ## Arquitectura de dos proyectos (importante)
 
 Este repo es SOLO el sitio público. Comparte la MISMA base de datos Supabase
-con un proyecto de administración separado (aún no creado):
+con un proyecto de administración separado:
 
 - Aquí: se LEEN `portafolio` y `equipo`; solo se INSERTA en `consultas`
   (formulario de contacto). Clave `anon`, protegida por RLS.
-- Proyecto admin (otro repo, `dynamiccoding01/DinamicCodingAdmin`): sistema de
+- Proyecto admin (otro repo, `dynamiccoding01/DinamicCodingAdmin`; en esta
+  máquina, `C:\DynamicCodingAdmin`): sistema de
   clientes, proyectos, reuniones, cambios y pagos, con usuarios, roles y
   permisos. Entra con Supabase Auth y NO usa `service_role`: la base decide
   qué puede hacer cada sesión. No agregar administración aquí.
 
 **La base de datos está en español** (tablas, columnas y valores). Cambiar una
-tabla afecta a ambos proyectos. El script de la base de los dos proyectos vive
-en este repo: `supabase/base-de-datos.sql`, un solo archivo que se pega entero
-en el SQL Editor. Sirve para una base nueva y para actualizar la existente, y
-se puede volver a ejecutar sin romper ni duplicar nada.
+tabla afecta a ambos proyectos: antes de renombrar o quitar algo, buscar sus
+usos también en el código del panel. El script de la base de los dos
+proyectos vive en este repo: `supabase/base-de-datos.sql`, un solo archivo que
+se pega entero en el SQL Editor. Sirve para una base nueva y para actualizar
+la existente, y se puede volver a ejecutar sin romper ni duplicar nada.
+
+Por dentro, las partes 1–8 (tablas, roles y permisos, paso de las antiguas
+tablas en inglés, funciones, triggers, RLS, datos iniciales, Storage) van en
+una sola transacción; la 9 explica cómo nombrar al primer superadmin
+(`select privado.nombrar_superadmin('correo')`) y la 10 es la fila de
+comprobación, que debe decir «bien» en todo. Esa comprobación tiene listas y
+cuentas fijas (14 tablas, 33 permisos, al menos 8 roles, 4 políticas de
+imágenes): al agregar una tabla, un permiso o una política, actualizarla
+también.
 
 ## Datos
 
@@ -102,7 +118,9 @@ se puede volver a ejecutar sin romper ni duplicar nada.
   `isSupabaseConfigured()`; sin base de datos queda solo WhatsApp, para no
   recibir consultas que se perderían. Si hay error devuelve `values` y el
   form los repone vía `defaultValue` (React 19 vacía el form tras cada
-  acción; el `<select>` además necesita `key` para remontarse).
+  acción; el `<select>` además necesita `key` para remontarse). El input
+  oculto `website` es un honeypot: si llega con valor, la acción responde
+  «éxito» sin guardar nada, así que ese nombre no sirve para un campo real.
 - Límites de las consultas: `src/lib/inquiry.ts` (servidor + `maxLength`) debe
   coincidir con los CHECK de `consultas` en `supabase/base-de-datos.sql`. Un
   trigger (`privado.consultas_limite_frecuencia`) limita la frecuencia de
@@ -123,7 +141,9 @@ se puede volver a ejecutar sin romper ni duplicar nada.
   roles y permisos solo los gestiona el superadmin. El script se probó en
   PostgreSQL (PGlite) simulando visitante, cuentas sin acceso, promotor,
   consultor, administrador y superadmin; al cambiarlo hay que volver a probar
-  esa matriz.
+  esa matriz. El arnés de esa prueba no está en el repo: hay que armarlo
+  aparte, simulando lo que Supabase ya trae (`auth.users`, `auth.uid()`, los
+  roles `anon`/`authenticated` y `storage.buckets`/`storage.objects`).
 - Imágenes subidas: depósito público `imagenes` de Supabase Storage (lo crea
   el script), con carpetas `equipo/` y `portafolio/`; su URL pública va en
   `url_foto` / `imagen_portada`.
@@ -131,9 +151,10 @@ se puede volver a ejecutar sin romper ni duplicar nada.
   regeneran con ISR (`export const revalidate = 60`; `cacheComponents`
   desactivado). Una página nueva que lea de `data.ts` debe exportar lo mismo.
 - `next.config.ts` solo admite imágenes remotas de
-  `<NEXT_PUBLIC_SUPABASE_URL>/storage/v1/object/public/**`; cualquier otra URL
-  externa en `cover_image`/`avatar_url` no se mostrará. Imágenes locales en
-  `public/images`.
+  `<NEXT_PUBLIC_SUPABASE_URL>/storage/v1/object/public/**`. Con cualquier otra
+  URL externa en `cover_image`/`avatar_url`, la imagen sale rota en producción
+  y en `npm run dev` `next/image` lanza «Invalid src prop … hostname … is not
+  configured». Imágenes locales en `public/images`.
 
 ### Variables de entorno
 
