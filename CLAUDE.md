@@ -100,7 +100,12 @@ también.
 - Personal: `equipo.cargo` es el cargo visible y `funciones` (text[]) lo que
   cumple en la empresa (`desarrollador`, `consultor`, `promotor`…); las
   etiquetas están en `src/lib/roles.ts`. No confundir con la tabla `roles`,
-  que son los roles de acceso al panel.
+  que son los roles de acceso al panel. En `/equipo` se agrupan por función
+  (`ROLE_GROUPS` en `roles.ts`: orden, títulos y descripciones): el panel
+  guarda las funciones sin prioridad, así que cada persona aparece una vez,
+  en su primera función según ese orden, y el filtro por rol
+  (`team-directory.tsx`) muestra a todos los que la cumplen. Una función
+  nueva del panel hay que sumarla a `ROLE_GROUPS`.
 - Perfil estilo CV (`/equipo/[slug]`): `experiencia`, `formacion` y
   `certificaciones` son columnas jsonb con listas y claves en español
   (`cargo`, `organizacion`, `inicio`, `fin`…; sin `fin` = hoy),
@@ -253,8 +258,8 @@ revisar en el navegador lo que cambie a la vista.
 - lucide-react v1.x no trae logos de marca: GitHub, LinkedIn, X, WhatsApp,
   Instagram, Facebook y TikTok están en `src/components/ui/brand-icons.tsx`
   (paths de Simple Icons).
-- Server Components por defecto; solo son cliente `contact-form`, `navbar` y
-  `reveal`. Combinar clases con `cn()` de `src/lib/utils.ts`.
+- Server Components por defecto; solo son cliente `contact-form`, `navbar`,
+  `reveal` y `team-directory`. Combinar clases con `cn()` de `src/lib/utils.ts`.
 - Estructura: `src/components/ui` (primitivas), `sections` (bloques de la
   home, compuestos en `src/app/page.tsx`), `layout` (navbar/footer), y
   `services`/`projects`/`team`/`contact`.

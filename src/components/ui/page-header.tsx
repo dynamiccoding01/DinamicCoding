@@ -20,13 +20,13 @@ export function PageHeader({
 }) {
   return (
     <section className="panel">
-      <Container className="py-14 sm:py-16">
+      <Container className="py-9 sm:py-11">
         <Breadcrumbs items={[{ label: breadcrumb }]} />
-        <h1 className="mt-4 max-w-3xl text-balance font-display text-4xl font-extrabold tracking-tight text-navy sm:text-5xl">
+        <h1 className="mt-3 max-w-3xl text-balance font-display text-3xl font-extrabold tracking-tight text-navy sm:text-4xl">
           {title}
         </h1>
         {subtitle && (
-          <p className="mt-4 max-w-2xl text-pretty text-lg leading-relaxed text-ink-soft">
+          <p className="mt-3 max-w-2xl text-pretty leading-relaxed text-ink-soft">
             {subtitle}
           </p>
         )}

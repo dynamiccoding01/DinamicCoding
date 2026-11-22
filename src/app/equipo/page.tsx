@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Container } from "@/components/ui/container";
 import { PageHeader } from "@/components/ui/page-header";
-import { Reveal } from "@/components/ui/reveal";
-import { TeamCard } from "@/components/team/team-card";
+import { TeamDirectory } from "@/components/team/team-directory";
 import { CTA } from "@/components/sections/cta";
 import { getTeam } from "@/lib/data";
 
@@ -26,15 +25,20 @@ export default async function TeamPage() {
         subtitle="Aquí sabes con quién hablas. Entra en cada perfil para conocer su rol y su experiencia."
       />
 
-      <section className="panel py-16 sm:py-20">
+      <section className="panel py-10 sm:py-12">
         <Container>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {team.map((member, i) => (
-              <Reveal key={member.id} delay={(i % 3) * 80} className="h-full">
-                <TeamCard member={member} />
-              </Reveal>
-            ))}
-          </div>
+          {/* Solo lo que usa la tarjeta: el filtro corre en el navegador. */}
+          <TeamDirectory
+            members={team.map(({ id, slug, name, role, roles, headline, avatar_url }) => ({
+              id,
+              slug,
+              name,
+              role,
+              roles,
+              headline,
+              avatar_url,
+            }))}
+          />
         </Container>
       </section>
 
