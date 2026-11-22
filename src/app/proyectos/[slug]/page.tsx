@@ -79,7 +79,7 @@ export default async function ProjectDetailPage({
   return (
     <article>
       {/* Cabecera con la captura */}
-      <section className="border-b border-line bg-surface-soft">
+      <section className="panel">
         <Container className="grid items-center gap-10 py-12 sm:py-16 lg:grid-cols-[1.15fr_0.85fr]">
           <div>
             <Breadcrumbs
@@ -124,109 +124,111 @@ export default async function ProjectDetailPage({
       </section>
 
       {/* Contenido */}
-      <Container className="py-14 sm:py-16">
-        <div className="grid gap-12 lg:grid-cols-3">
-          <div className="lg:col-span-2">
-            <h2 className="font-display text-2xl font-extrabold tracking-tight text-navy">
-              Sobre el proyecto
-            </h2>
-            <p className="mt-4 text-pretty text-base leading-relaxed text-ink-soft">
-              {project.description}
-            </p>
+      <div className="panel">
+        <Container className="py-14 sm:py-16">
+          <div className="grid gap-12 lg:grid-cols-3">
+            <div className="lg:col-span-2">
+              <h2 className="font-display text-2xl font-extrabold tracking-tight text-navy">
+                Sobre el proyecto
+              </h2>
+              <p className="mt-4 text-pretty text-base leading-relaxed text-ink-soft">
+                {project.description}
+              </p>
 
-            {project.highlights.length > 0 && (
-              <>
-                <h3 className="mt-10 font-display text-xl font-bold text-navy">
-                  Lo que construimos
-                </h3>
-                <ul className="mt-5 grid gap-3.5 sm:grid-cols-2">
-                  {project.highlights.map((item) => (
-                    <li key={item} className="flex items-start gap-3">
-                      <CheckCircle2 size={20} className="mt-0.5 shrink-0 text-brand-500" />
-                      <span className="text-sm leading-relaxed text-ink-soft">
-                        {item}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </>
-            )}
-
-            {(project.demo_url || project.repo_url) && (
-              <div className="mt-10 flex flex-wrap gap-3">
-                {project.demo_url && (
-                  <Button href={project.demo_url} external>
-                    Ver en vivo
-                    <ExternalLink size={16} />
-                  </Button>
-                )}
-                {project.repo_url && (
-                  <Button href={project.repo_url} external variant="secondary">
-                    <GithubIcon size={16} />
-                    Repositorio
-                  </Button>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* Barra lateral */}
-          <aside className="lg:col-span-1">
-            <div className="card rounded-2xl p-6">
-              <h3 className="font-display text-sm font-bold uppercase tracking-wide text-navy">
-                Detalles
-              </h3>
-              <dl className="mt-5 space-y-5">
-                {project.client && (
-                  <MetaItem Icon={Building2} label="Cliente" value={project.client} />
-                )}
-                {project.year && (
-                  <MetaItem Icon={Calendar} label="Año" value={String(project.year)} />
-                )}
-                <MetaItem Icon={Tag} label="Tipo" value={project.category} />
-              </dl>
-
-              {project.technologies.length > 0 && (
+              {project.highlights.length > 0 && (
                 <>
-                  <h3 className="mt-7 font-display text-sm font-bold uppercase tracking-wide text-navy">
-                    Tecnologías
+                  <h3 className="mt-10 font-display text-xl font-bold text-navy">
+                    Lo que construimos
                   </h3>
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {project.technologies.map((tech) => (
-                      <Badge key={tech} tone="brand">
-                        {tech}
-                      </Badge>
+                  <ul className="mt-5 grid gap-3.5 sm:grid-cols-2">
+                    {project.highlights.map((item) => (
+                      <li key={item} className="flex items-start gap-3">
+                        <CheckCircle2 size={20} className="mt-0.5 shrink-0 text-brand-500" />
+                        <span className="text-sm leading-relaxed text-ink-soft">
+                          {item}
+                        </span>
+                      </li>
                     ))}
-                  </div>
+                  </ul>
                 </>
               )}
 
-              {service && (
-                <Link
-                  href={`/servicios/${service.slug}`}
-                  className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-600 hover:text-navy"
-                >
-                  Ver este tipo de página
-                  <ArrowRight size={15} />
-                </Link>
+              {(project.demo_url || project.repo_url) && (
+                <div className="mt-10 flex flex-wrap gap-3">
+                  {project.demo_url && (
+                    <Button href={project.demo_url} external>
+                      Ver en vivo
+                      <ExternalLink size={16} />
+                    </Button>
+                  )}
+                  {project.repo_url && (
+                    <Button href={project.repo_url} external variant="secondary">
+                      <GithubIcon size={16} />
+                      Repositorio
+                    </Button>
+                  )}
+                </div>
               )}
             </div>
 
-            <div className="mt-6 rounded-2xl border border-brand-100 bg-brand-50 p-6 text-center">
-              <p className="text-sm font-semibold text-navy">
-                ¿Quieres algo similar para tu negocio?
-              </p>
-              <WhatsAppButton
-                message={`Hola, vi el proyecto ${project.title} y quiero algo similar.`}
-                size="md"
-                className="mt-4 w-full"
-              >
-                Cotiza por WhatsApp
-              </WhatsAppButton>
-            </div>
-          </aside>
-        </div>
-      </Container>
+            {/* Barra lateral */}
+            <aside className="lg:col-span-1">
+              <div className="card rounded-2xl p-6">
+                <h3 className="font-display text-sm font-bold uppercase tracking-wide text-navy">
+                  Detalles
+                </h3>
+                <dl className="mt-5 space-y-5">
+                  {project.client && (
+                    <MetaItem Icon={Building2} label="Cliente" value={project.client} />
+                  )}
+                  {project.year && (
+                    <MetaItem Icon={Calendar} label="Año" value={String(project.year)} />
+                  )}
+                  <MetaItem Icon={Tag} label="Tipo" value={project.category} />
+                </dl>
+
+                {project.technologies.length > 0 && (
+                  <>
+                    <h3 className="mt-7 font-display text-sm font-bold uppercase tracking-wide text-navy">
+                      Tecnologías
+                    </h3>
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      {project.technologies.map((tech) => (
+                        <Badge key={tech} tone="brand">
+                          {tech}
+                        </Badge>
+                      ))}
+                    </div>
+                  </>
+                )}
+
+                {service && (
+                  <Link
+                    href={`/servicios/${service.slug}`}
+                    className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-600 hover:text-navy"
+                  >
+                    Ver este tipo de página
+                    <ArrowRight size={15} />
+                  </Link>
+                )}
+              </div>
+
+              <div className="mt-6 rounded-2xl border border-brand-100 bg-brand-50 p-6 text-center">
+                <p className="text-sm font-semibold text-navy">
+                  ¿Quieres algo similar para tu negocio?
+                </p>
+                <WhatsAppButton
+                  message={`Hola, vi el proyecto ${project.title} y quiero algo similar.`}
+                  size="md"
+                  className="mt-4 w-full"
+                >
+                  Cotiza por WhatsApp
+                </WhatsAppButton>
+              </div>
+            </aside>
+          </div>
+        </Container>
+      </div>
     </article>
   );
 }

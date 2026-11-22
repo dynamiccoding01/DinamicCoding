@@ -24,7 +24,7 @@ const steps = [
 /** Cómo trabajamos: de la primera conversación a la página publicada. */
 export function Process() {
   return (
-    <section className="border-b border-line bg-surface-soft py-20 sm:py-24">
+    <section className="panel py-20 sm:py-24">
       <Container>
         <SectionHeading
           eyebrow="Cómo trabajamos"

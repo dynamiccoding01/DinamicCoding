@@ -19,17 +19,8 @@ export function PageHeader({
   children?: React.ReactNode;
 }) {
   return (
-    <section className="relative overflow-hidden border-b border-line bg-surface-soft">
-      {/* Formas diagonales de la marca, muy tenues */}
-      <div
-        aria-hidden
-        className="shape-diagonal pointer-events-none absolute bottom-0 right-0 top-0 hidden w-[26rem] bg-brand-100/60 md:block"
-      />
-      <div
-        aria-hidden
-        className="shape-stripe pointer-events-none absolute bottom-0 right-10 top-0 hidden w-[26rem] bg-brand-200/60 md:block"
-      />
-      <Container className="relative py-14 sm:py-16">
+    <section className="panel">
+      <Container className="py-14 sm:py-16">
         <Breadcrumbs items={[{ label: breadcrumb }]} />
         <h1 className="mt-4 max-w-3xl text-balance font-display text-4xl font-extrabold tracking-tight text-navy sm:text-5xl">
           {title}

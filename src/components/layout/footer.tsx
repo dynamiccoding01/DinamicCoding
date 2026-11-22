@@ -20,7 +20,7 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="mt-auto border-t border-line bg-surface-soft">
+    <footer className="mt-auto border-t border-line bg-surface-soft/85 backdrop-blur-lg">
       <Container className="py-14">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-12">
           {/* Marca */}

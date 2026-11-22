@@ -9,7 +9,7 @@ import { serviceTypes } from "@/lib/services";
 /** Grilla con los siete tipos de página y una tarjeta de asesoría. */
 export function ServiceTypes() {
   return (
-    <section id="servicios" className="border-b border-line py-20 sm:py-24">
+    <section id="servicios" className="panel py-20 sm:py-24">
       <Container>
         <SectionHeading
           eyebrow="Qué desarrollamos"

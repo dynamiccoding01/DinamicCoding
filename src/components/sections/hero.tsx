@@ -45,16 +45,10 @@ function TypeList() {
 
 export function Hero() {
   return (
-    <section className="relative overflow-hidden border-b border-line bg-surface-soft">
-      {/* Formas diagonales de la marca */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-y-0 right-0 hidden w-[46%] lg:block"
-      >
-        <div className="shape-stripe absolute inset-y-0 -left-10 w-full bg-gradient-to-b from-sky to-brand-500" />
-        <div className="shape-diagonal absolute inset-0 bg-gradient-to-br from-brand-800 to-navy-deep" />
-      </div>
-
+    // En pantalla grande va sin vidrio: atrás se ve nítida la diagonal del
+    // fondo del sitio. En celular y tablet el texto la taparía, así que va en
+    // vidrio como las demás secciones.
+    <section className="max-lg:panel">
       <Container className="relative grid items-center gap-12 py-16 sm:py-20 lg:grid-cols-[1.08fr_0.92fr] lg:gap-16 lg:py-24">
         <div>
           <Reveal>

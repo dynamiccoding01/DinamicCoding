@@ -60,7 +60,7 @@ export default function ContactPage() {
         subtitle="Cuéntanos qué necesita tu negocio y te asesoramos. No hace falta registrarse."
       />
 
-      <section className="border-b border-line py-16 sm:py-20">
+      <section className="panel py-16 sm:py-20">
         <Container>
           <div className="grid gap-8 lg:grid-cols-5">
             {/* WhatsApp */}
@@ -126,7 +126,7 @@ export default function ContactPage() {
       </section>
 
       {formEnabled && (
-        <section className="bg-surface-soft py-16 sm:py-20">
+        <section className="panel py-16 sm:py-20">
           <Container>
             <div className="mx-auto max-w-3xl">
               <Eyebrow>Formulario</Eyebrow>

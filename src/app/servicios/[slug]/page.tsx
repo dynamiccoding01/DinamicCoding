@@ -51,16 +51,8 @@ export default async function ServiceDetailPage({
   return (
     <>
       {/* Cabecera */}
-      <section className="relative overflow-hidden border-b border-line bg-surface-soft">
-        <div
-          aria-hidden
-          className="shape-diagonal pointer-events-none absolute bottom-0 right-0 top-0 hidden w-[26rem] bg-brand-100/60 md:block"
-        />
-        <div
-          aria-hidden
-          className="shape-stripe pointer-events-none absolute bottom-0 right-10 top-0 hidden w-[26rem] bg-brand-200/60 md:block"
-        />
-        <Container className="relative grid items-center gap-12 py-12 sm:py-16 lg:grid-cols-[1.05fr_0.95fr]">
+      <section className="panel">
+        <Container className="grid items-center gap-12 py-12 sm:py-16 lg:grid-cols-[1.05fr_0.95fr]">
           <div>
             <Breadcrumbs
               items={[
@@ -105,7 +97,7 @@ export default async function ServiceDetailPage({
       </section>
 
       {/* Partes, con los mismos números que la maqueta */}
-      <section className="border-b border-line py-16 sm:py-20">
+      <section className="panel py-16 sm:py-20">
         <Container>
           <h2 className="font-display text-2xl font-extrabold tracking-tight text-navy">
             Sus partes principales
@@ -132,7 +124,7 @@ export default async function ServiceDetailPage({
       </section>
 
       {/* Ideal para + otros tipos */}
-      <section className="border-b border-line py-16 sm:py-20">
+      <section className="panel py-16 sm:py-20">
         <Container className="grid gap-12 lg:grid-cols-3">
           <div className="lg:col-span-2">
             <h2 className="font-display text-2xl font-extrabold tracking-tight text-navy">
@@ -195,7 +187,7 @@ export default async function ServiceDetailPage({
 
       {/* Proyectos de este tipo */}
       {projects.length > 0 && (
-        <section className="border-b border-line bg-surface-soft py-16 sm:py-20">
+        <section className="panel py-16 sm:py-20">
           <Container>
             <h2 className="font-display text-2xl font-extrabold tracking-tight text-navy">
               Un ejemplo de nuestro trabajo

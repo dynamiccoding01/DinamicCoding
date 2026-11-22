@@ -26,7 +26,7 @@ export default async function TeamPage() {
         subtitle="Aquí sabes con quién hablas. Entra en cada perfil para conocer su rol y su experiencia."
       />
 
-      <section className="border-b border-line py-16 sm:py-20">
+      <section className="panel py-16 sm:py-20">
         <Container>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {team.map((member, i) => (

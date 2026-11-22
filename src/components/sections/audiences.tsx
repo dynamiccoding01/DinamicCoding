@@ -5,7 +5,7 @@ import { audiences } from "@/lib/services";
 /** Franja con los públicos para los que desarrollamos páginas web. */
 export function Audiences() {
   return (
-    <section className="border-b border-line">
+    <section className="panel">
       <Container className="flex flex-col gap-4 py-7 lg:flex-row lg:items-center lg:justify-between">
         <p className="text-sm font-semibold text-navy">
           Desarrollamos páginas web para

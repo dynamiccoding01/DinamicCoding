@@ -76,7 +76,7 @@ export default async function TeamMemberPage({
     member.education.length > 0 || member.certifications.length > 0;
 
   return (
-    <div className="profile-print bg-surface-soft">
+    <div className="profile-print panel">
       <Container className="py-10 sm:py-14">
         <Breadcrumbs
           items={[

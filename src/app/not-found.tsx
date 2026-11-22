@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 
 export default function NotFound() {
   return (
-    <section className="py-28">
+    <section className="panel py-28">
       <Container className="text-center">
         <p className="font-display text-7xl font-extrabold tracking-tight text-brand-500">
           404

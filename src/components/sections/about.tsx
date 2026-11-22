@@ -22,7 +22,7 @@ const points = [
 
 export function About() {
   return (
-    <section id="nosotros" className="border-b border-line py-20 sm:py-24">
+    <section id="nosotros" className="panel py-20 sm:py-24">
       <Container className="grid items-center gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
         <Reveal>
           <div className="relative overflow-hidden rounded-3xl border border-line bg-surface-soft px-8 py-16">

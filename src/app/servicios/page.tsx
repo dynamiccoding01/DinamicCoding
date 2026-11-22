@@ -41,7 +41,7 @@ export default function ServicesPage() {
         subtitle="Cada negocio necesita un sitio según sus objetivos, su rubro y la forma en que atiende a sus clientes. Estos son los siete tipos de página que desarrollamos."
       />
 
-      <section className="border-b border-line py-16 sm:py-20">
+      <section className="panel py-16 sm:py-20">
         <Container>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {serviceTypes.map((type, i) => (
@@ -65,7 +65,7 @@ export default function ServicesPage() {
         </Container>
       </section>
 
-      <section className="border-b border-line bg-surface-soft py-16 sm:py-20">
+      <section className="panel py-16 sm:py-20">
         <Container>
           <div className="grid gap-6 md:grid-cols-2">
             {extras.map(({ Icon, title, text, cta, message }, i) => (

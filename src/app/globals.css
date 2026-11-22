@@ -143,6 +143,47 @@ section[id] { scroll-margin-top: 5rem; }
   from { opacity: 0; transform: scale(0.3); }
 }
 
+/*
+  Fondo fijo de todo el sitio (<SiteBackground>): el corte diagonal. Su copia
+  desenfocada y aclarada (.site-bg-soft) aparece en los primeros 80vh de
+  scroll. Sin soporte de animaciones ligadas al scroll, queda nítido.
+*/
+.site-bg-soft { opacity: 0; }
+@supports (animation-timeline: scroll()) {
+  .site-bg-soft {
+    animation: site-bg-soften linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 80vh;
+  }
+}
+@keyframes site-bg-soften {
+  to { opacity: 1; }
+}
+
+/*
+  Sección de vidrio sobre ese fondo: blanco translúcido, bordes redondeados y
+  aire entre secciones. Es @utility para admitir variantes (`max-lg:panel`).
+  El desenfoque del vidrio va solo desde 768 px: en celular el fondo ya llega
+  desenfocado y así el scroll no se pone pesado.
+*/
+@utility panel {
+  width: min(100% - 1.5rem, 76rem);
+  margin: 1.25rem auto;
+  border: 1px solid color-mix(in srgb, var(--color-surface) 70%, transparent);
+  border-radius: 1.75rem;
+  background-color: color-mix(in srgb, var(--color-surface) 86%, transparent);
+  box-shadow: 0 24px 48px -40px rgb(6 33 95 / 0.4);
+  @media (width >= 48rem) {
+    -webkit-backdrop-filter: blur(16px) saturate(1.15);
+    backdrop-filter: blur(16px) saturate(1.15);
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    background-color: var(--color-surface);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
 @keyframes type-cycle {
   0%, 14.3%, 100% { background-color: transparent; color: var(--color-ink-soft); }
   1.5%, 12.8% { background-color: var(--color-brand-50); color: var(--color-navy); }
@@ -179,6 +220,7 @@ summary { list-style: none; }
   .reveal, .reveal.is-visible { opacity: 1; animation: none; }
   .float-slow, .wa-pulse, .type-row, .type-row .type-check { animation: none; }
   .mock-animated .mock-piece, .mock-animated .mock-marker { animation: none; }
+  .site-bg-soft { animation: none; }
   .type-row:first-child { background-color: var(--color-brand-50); color: var(--color-navy); }
   .type-row:first-child .type-check { opacity: 1; }
   .card-hover:hover { transform: none; }
@@ -201,4 +243,5 @@ summary { list-style: none; }
   .profile-print > div { max-width: none; padding: 0 !important; }
   .profile-print > div > header { margin-top: 0 !important; }
   .card { box-shadow: none; break-inside: avoid; }
+  .panel { width: auto; margin: 0; border: 0; border-radius: 0; box-shadow: none; background: #fff; }
 }

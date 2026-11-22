@@ -10,7 +10,7 @@ import { serviceTypes } from "@/lib/services";
 /** Guía de asesoría: lo que quiere lograr el cliente → tipo de página. */
 export function Guide() {
   return (
-    <section className="border-b border-line bg-surface-soft py-20 sm:py-24">
+    <section className="panel py-20 sm:py-24">
       <Container className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
         <Reveal>
           <div className="lg:sticky lg:top-28">

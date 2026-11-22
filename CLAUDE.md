@@ -198,13 +198,24 @@ revisar en el navegador lo que cambie a la vista.
   de Tailwind pueden sobrescribirlas): `.card` y `.card-hover` (tarjetas),
   y los motivos de la marca `.slant` (banda en paralelogramo), `.pin` (línea
   con punto junto a textos de apoyo), `.shape-diagonal` / `.shape-stripe`
-  (formas diagonales del hero, cabeceras y llamado final).
+  (formas diagonales del fondo del sitio, el llamado final y el detalle de
+  proyecto).
+- Fondo y vidrio: `<SiteBackground>` (en `layout.tsx`) dibuja el corte
+  diagonal fijo detrás de todo el sitio; `.site-bg-soft` lo desenfoca y aclara
+  en los primeros 80vh de scroll (animación CSS ligada al scroll, sin JS; sin
+  soporte queda nítido). Cada sección va en `panel` (`@utility` de
+  `globals.css`: vidrio blanco al 86 %, bordes redondeados y aire entre
+  secciones); el inicio solo es panel bajo `lg` (`max-lg:panel`) para dejar
+  ver la diagonal nítida en pantalla grande. Una sección nueva debe usar
+  `panel`: sin él, su texto queda sobre el azul. El vidrio desenfoca solo
+  desde 768 px, por rendimiento en celular.
 - «Descargar CV» (`print-button.tsx`) abre la impresión del navegador; el
   formato del PDF es el bloque `@media print` de `globals.css` (oculta
   navegación, pie y todo lo que lleve `.no-print`, y baja la base de `rem`).
 - Animaciones: `<Reveal>` al hacer scroll, `.type-row` (resaltado que recorre
   la lista del hero, solo CSS), `.float-slow`, `.wa-pulse` y
-  `.mock-piece`/`.mock-marker` (maquetas). Toda animación nueva debe
+  `.mock-piece`/`.mock-marker` (maquetas) y `.site-bg-soft` (fondo). Toda
+  animación nueva debe
   desactivarse en el bloque `prefers-reduced-motion` del final.
 - `<Reveal>` (`src/components/ui/reveal.tsx`): `.reveal.is-visible` debe
   mantener `opacity: 1` explícito (no solo vía la animación) y el fallback de

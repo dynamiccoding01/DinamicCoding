@@ -11,7 +11,7 @@ export async function FeaturedProjects() {
   if (projects.length === 0) return null;
 
   return (
-    <section className="border-b border-line py-20 sm:py-24">
+    <section className="panel py-20 sm:py-24">
       <Container>
         <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
           <SectionHeading

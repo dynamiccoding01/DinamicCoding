@@ -26,7 +26,7 @@ export default async function ProjectsPage() {
         subtitle="Cada proyecto responde a un objetivo distinto. Entra en cualquiera para ver de qué se trata."
       />
 
-      <section className="border-b border-line py-16 sm:py-20">
+      <section className="panel py-16 sm:py-20">
         <Container>
           <Reveal>
             <ProjectGrid projects={projects} />

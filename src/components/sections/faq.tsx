@@ -28,7 +28,7 @@ const faqs = [
 
 export function FAQ() {
   return (
-    <section className="border-b border-line bg-surface-soft py-20 sm:py-24">
+    <section className="panel py-20 sm:py-24">
       <Container>
         <SectionHeading
           eyebrow="Preguntas frecuentes"
