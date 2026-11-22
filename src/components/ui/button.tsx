@@ -28,6 +28,8 @@ interface ButtonProps {
   children: React.ReactNode;
   href?: string;
   external?: boolean;
+  /** Descarga el archivo de `href` en vez de abrirlo (p. ej. el CV en PDF). */
+  download?: boolean;
   type?: "button" | "submit" | "reset";
   disabled?: boolean;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
@@ -40,6 +42,7 @@ export function Button({
   children,
   href,
   external,
+  download,
   type = "button",
   disabled,
   onClick,
@@ -47,6 +50,13 @@ export function Button({
   const classes = cn(base, variants[variant], sizes[size], className);
 
   if (href) {
+    if (download) {
+      return (
+        <a href={href} download className={classes}>
+          {children}
+        </a>
+      );
+    }
     if (external) {
       return (
         <a href={href} target="_blank" rel="noopener noreferrer" className={classes}>

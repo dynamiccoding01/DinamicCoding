@@ -2,7 +2,7 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 /** Devuelve las iniciales (máx. 2) a partir de un nombre completo. */
-function initials(name: string) {
+export function initials(name: string) {
   return name
     .trim()
     .split(/\s+/)

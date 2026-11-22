@@ -13,7 +13,8 @@ import type { TeamMember } from "@/lib/types";
 type IconComponent = React.ComponentType<{ size?: number; className?: string }>;
 type LinkDef = { href: string; label: string; Icon: IconComponent };
 
-function buildLinks(member: TeamMember): LinkDef[] {
+/** Enlaces y redes de la persona, en orden (también los usa el CV en PDF). */
+export function buildLinks(member: TeamMember): LinkDef[] {
   const links: LinkDef[] = [];
   if (member.github_url)
     links.push({ href: member.github_url, label: "GitHub", Icon: GithubIcon });

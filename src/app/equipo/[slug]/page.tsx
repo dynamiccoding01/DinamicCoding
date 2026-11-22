@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import {
   ArrowUpRight,
   Briefcase,
+  Download,
   GraduationCap,
   LayoutGrid,
   Link2,
@@ -15,10 +16,10 @@ import {
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
+import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { WhatsAppButton } from "@/components/ui/whatsapp-button";
 import { GithubCard } from "@/components/team/github-card";
-import { PrintButton } from "@/components/team/print-button";
 import { ProfileSection, TimelineItem } from "@/components/team/profile-section";
 import { SocialLinks, hasSocialLinks } from "@/components/team/social-links";
 import { RoleBadges } from "@/components/team/team-card";
@@ -27,6 +28,7 @@ import { getProjects, getTeam, getTeamMemberBySlug } from "@/lib/data";
 import { DEMO_SLUG } from "@/lib/demo-profile";
 import { githubUsername } from "@/lib/github";
 import { siteUrl } from "@/lib/site";
+import { period } from "@/lib/utils";
 
 // Los datos vienen de Supabase: se regenera como máximo cada 60 s.
 export const revalidate = 60;
@@ -47,11 +49,6 @@ export async function generateMetadata({
   const member = await getTeamMemberBySlug(slug);
   if (!member) return { title: "Perfil no encontrado" };
   return { title: `${member.name} — ${member.role}`, description: member.headline };
-}
-
-/** "2021 – hoy", "2019 – 2021" o lo que haya. */
-function period(start: string, end: string | null) {
-  return [start, end ?? "hoy"].filter(Boolean).join(" – ");
 }
 
 /**
@@ -128,7 +125,7 @@ export default async function TeamMemberPage({
               )}
             </div>
 
-            {/* Solo en el PDF: cómo contactar a la empresa */}
+            {/* Solo al imprimir la página: cómo contactar a la empresa */}
             <p className="mt-4 hidden text-sm text-ink-soft print:block">
               Dynamic Coding · WhatsApp {contact.whatsappDisplay} ·{" "}
               {siteUrl.replace(/^https?:\/\//, "")}
@@ -143,7 +140,16 @@ export default async function TeamMemberPage({
             >
               Pedir consulta
             </WhatsAppButton>
-            <PrintButton className="w-full" />
+            <Button
+              href={`/equipo/${member.slug}/cv`}
+              download
+              variant="secondary"
+              size="md"
+              className="w-full"
+            >
+              <Download size={17} />
+              Descargar CV
+            </Button>
           </div>
         </header>
 

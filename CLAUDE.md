@@ -12,7 +12,7 @@ son lo mismo»: asesora al cliente y desarrolla uno de siete tipos de página.
 Los clientes nunca se registran; el canal principal de contacto es WhatsApp.
 
 Rutas: inicio, `/servicios`, `/proyectos` y `/equipo` (cada una con su detalle
-`[slug]`), `/contacto`. Next.js 16 (App Router, Turbopack) + React 19 +
+`[slug]`), `/equipo/[slug]/cv` (CV en PDF) y `/contacto`. Next.js 16 (App Router, Turbopack) + React 19 +
 TypeScript + Tailwind v4 + Supabase + lucide-react. Desplegado en Vercel.
 
 Todo el contenido, la UI y los comentarios del código están en español.
@@ -209,9 +209,16 @@ revisar en el navegador lo que cambie a la vista.
   ver la diagonal nítida en pantalla grande. Una sección nueva debe usar
   `panel`: sin él, su texto queda sobre el azul. El vidrio desenfoca solo
   desde 768 px, por rendimiento en celular.
-- «Descargar CV» (`print-button.tsx`) abre la impresión del navegador; el
-  formato del PDF es el bloque `@media print` de `globals.css` (oculta
-  navegación, pie y todo lo que lleve `.no-print`, y baja la base de `rem`).
+- «Descargar CV» baja un PDF que arma el servidor:
+  `src/app/equipo/[slug]/cv/route.ts` con `@react-pdf/renderer`, y el diseño
+  en `src/components/team/cv-document.tsx` (mismos datos y secciones que el
+  perfil, Helvetica, colores copiados del `@theme`). Un dato nuevo del perfil
+  hay que sumarlo también ahí. La foto entra solo si es JPG o PNG de
+  `public/images` o del Storage de Supabase; si no, van las iniciales. En
+  react-pdf 4, un View absoluto con `bottom` o un Text con `render` (número de
+  página) salen fuera de la hoja. El bloque `@media print` de `globals.css`
+  queda para quien imprima la página con Ctrl+P (oculta navegación, pie y
+  `.no-print`, y baja la base de `rem`).
 - Animaciones: `<Reveal>` al hacer scroll, `.type-row` (resaltado que recorre
   la lista del hero, solo CSS), `.float-slow`, `.wa-pulse` y
   `.mock-piece`/`.mock-marker` (maquetas) y `.site-bg-soft` (fondo). Toda
@@ -246,8 +253,8 @@ revisar en el navegador lo que cambie a la vista.
 - lucide-react v1.x no trae logos de marca: GitHub, LinkedIn, X, WhatsApp,
   Instagram, Facebook y TikTok están en `src/components/ui/brand-icons.tsx`
   (paths de Simple Icons).
-- Server Components por defecto; solo son cliente `contact-form`, `navbar`,
-  `reveal` y `print-button`. Combinar clases con `cn()` de `src/lib/utils.ts`.
+- Server Components por defecto; solo son cliente `contact-form`, `navbar` y
+  `reveal`. Combinar clases con `cn()` de `src/lib/utils.ts`.
 - Estructura: `src/components/ui` (primitivas), `sections` (bloques de la
   home, compuestos en `src/app/page.tsx`), `layout` (navbar/footer), y
   `services`/`projects`/`team`/`contact`.

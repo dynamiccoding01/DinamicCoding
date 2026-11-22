@@ -226,8 +226,9 @@ summary { list-style: none; }
   .card-hover:hover { transform: none; }
 }
 
-/* PDF del perfil del equipo («Descargar CV»): solo el contenido, sin
-   navegación, botones ni pie, y a escala de documento. */
+/* Impresión de la página (Ctrl+P), pensada para el perfil del equipo: solo
+   el contenido, sin navegación, botones ni pie, y a escala de documento.
+   «Descargar CV» no pasa por aquí: baja el PDF de /equipo/[slug]/cv. */
 @media print {
   @page { margin: 12mm; }
   /* Todo el sitio usa rem: bajar la base encoge el perfil a tamaño de CV. */
