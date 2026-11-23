@@ -38,7 +38,7 @@ export const seedProjects: Project[] = [
   {
     id: "seed-fernandez",
     slug: "catalogo-fernandez",
-    title: "Catálogo Fernández",
+    title: "Fernández",
     summary:
       "Catálogo digital de calzado deportivo para venta por docena y media docena.",
     description:
@@ -73,7 +73,7 @@ export const seedTeam: TeamMember[] = [
     bio: "Fundador de Dynamic Coding. Acompaña a cada cliente desde la primera asesoría hasta la publicación de su página web.",
     avatar_url: null,
     skills: ["Páginas web", "Tiendas online", "Asesoría"],
-    location: "Santa Cruz de la Sierra, Bolivia",
+    location: null,
     years_experience: null,
     available: true,
     // El resto del perfil (trayectoria, formación, redes) se carga desde el

@@ -1,7 +1,6 @@
 # Dynamic Coding — Sitio público
 
-Sitio de **Dynamic Coding** · *DC Consultores, Asesoría y Consultoría* (Santa
-Cruz de la Sierra, Bolivia). Su mensaje central: **«No todas las páginas web son
+Sitio de **Dynamic Coding** · *DC Consultores, Asesoría y Consultoría*. Su mensaje central: **«No todas las páginas web son
 lo mismo»**. Presenta los siete tipos de página que desarrolla la empresa, sus
 proyectos y su equipo, y permite cotizar por WhatsApp sin registrarse.
 

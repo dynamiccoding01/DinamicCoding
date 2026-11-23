@@ -41,9 +41,15 @@
   color-scheme: light;
 }
 
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  /* Barra de scroll fina y en el azul de la marca (Chrome 121+ y Firefox). */
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-brand-300) transparent;
+}
 
 body {
+  overflow-x: clip;
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -104,6 +110,15 @@ section[id] { scroll-margin-top: 5rem; }
   .shape-diagonal {
     clip-path: polygon(38% 0, 100% 0, 100% 100%, 0 100%);
   }
+  /* Borde izquierdo inclinado como la diagonal del fondo del sitio. En el
+     fondo la línea baja 17.48vw a lo largo de 100vh, así que su tangente es
+     17.48vw / 100vh; el primer valor es el respaldo para navegadores sin
+     atan2(). */
+  .card-diagonal {
+    transform-origin: 0 50%;
+    transform: skewX(-17deg);
+    transform: skewX(calc(atan2(17.48vw, 100vh) * -1));
+  }
   .shape-stripe {
     clip-path: polygon(38% 0, 45% 0, 7% 100%, 0 100%);
   }
@@ -117,6 +132,13 @@ section[id] { scroll-margin-top: 5rem; }
     opacity: 0;
     animation: type-check 17.5s ease-in-out infinite;
     animation-delay: calc(var(--i, 0) * 2.5s);
+  }
+
+  /* Subrayado que se dibuja bajo «lo mismo» al cargar el inicio. */
+  .underline-draw {
+    background: linear-gradient(90deg, var(--color-brand-200), var(--color-sky))
+      no-repeat 0 94% / 100% 0.14em;
+    animation: underline-draw 1s 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
   .float-slow { animation: float-y 9s ease-in-out infinite; }
@@ -148,6 +170,21 @@ section[id] { scroll-margin-top: 5rem; }
   desenfocada y aclarada (.site-bg-soft) aparece en los primeros 80vh de
   scroll. Sin soporte de animaciones ligadas al scroll, queda nítido.
 */
+/*
+  En celular (pantalla angosta y alta) la diagonal de escritorio queda como una
+  franja casi vertical. Ahí es un triángulo que nace en la esquina superior
+  derecha y crece hacia abajo: misma forma de corte, inclinación visible.
+*/
+@media (width < 48rem) {
+  .site-bg-diag { width: 36%; }
+  .site-bg-diag .shape-diagonal { clip-path: polygon(100% 0, 100% 0, 100% 100%, 0 100%); }
+  .site-bg-diag .shape-stripe {
+    inset-inline: 0 auto;
+    width: 100%;
+    clip-path: polygon(91% 0, 100% 0, 9% 100%, 0 100%);
+  }
+}
+
 .site-bg-soft { opacity: 0; }
 @supports (animation-timeline: scroll()) {
   .site-bg-soft {
@@ -159,6 +196,34 @@ section[id] { scroll-margin-top: 5rem; }
 @keyframes site-bg-soften {
   to { opacity: 1; }
 }
+@keyframes underline-draw {
+  from { background-size: 0 0.14em; }
+}
+
+/*
+  Barra fina arriba que avanza con el scroll (<div class="scroll-progress">
+  en layout.tsx). Sin soporte de animaciones ligadas al scroll queda a cero,
+  o sea invisible.
+*/
+.scroll-progress {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 60;
+  height: 3px;
+  pointer-events: none;
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  background: linear-gradient(90deg, var(--color-brand-500), var(--color-sky));
+}
+@supports (animation-timeline: scroll()) {
+  .scroll-progress {
+    animation: scroll-progress linear both;
+    animation-timeline: scroll(root);
+  }
+}
+@keyframes scroll-progress {
+  to { transform: scaleX(1); }
+}
 
 /*
   Sección de vidrio sobre ese fondo: blanco translúcido, bordes redondeados y
@@ -166,13 +231,15 @@ section[id] { scroll-margin-top: 5rem; }
   El desenfoque del vidrio va solo desde 768 px: en celular el fondo ya llega
   desenfocado y así el scroll no se pone pesado.
 */
+/* Alto de la primera pantalla menos la barra (4rem); vh es respaldo de svh. */
+@utility fill-screen {
+  min-height: calc(100vh - 4rem);
+  min-height: calc(100svh - 4rem);
+}
+
 @utility panel {
-  width: min(100% - 1.5rem, 76rem);
-  margin: 1.25rem auto;
-  border: 1px solid color-mix(in srgb, var(--color-surface) 70%, transparent);
-  border-radius: 1.75rem;
+  width: 100%;
   background-color: color-mix(in srgb, var(--color-surface) 86%, transparent);
-  box-shadow: 0 24px 48px -40px rgb(6 33 95 / 0.4);
   @media (width >= 48rem) {
     -webkit-backdrop-filter: blur(16px) saturate(1.15);
     backdrop-filter: blur(16px) saturate(1.15);
@@ -206,21 +273,102 @@ section[id] { scroll-margin-top: 5rem; }
 details[open] .faq-chevron { transform: rotate(180deg); }
 summary::-webkit-details-marker { display: none; }
 summary { list-style: none; }
+/* La respuesta se despliega con altura animada donde el navegador lo admite
+   (Chrome/Edge); en el resto se abre de golpe, sin perder nada. */
+@supports (interpolate-size: allow-keywords) {
+  :root { interpolate-size: allow-keywords; }
+  details::details-content {
+    height: 0;
+    overflow: clip;
+    transition: height 0.3s ease, content-visibility 0.3s allow-discrete;
+  }
+  details[open]::details-content { height: auto; }
+}
 
-/* Aparición al hacer scroll (componente <Reveal/>) */
+/*
+  Escenas de «Cómo trabajamos» (process-scenes.tsx). Cada pieza ya está en su
+  estado final; al activarse la escena (`.pr-on`) las animaciones parten del
+  estado inicial (`from`) tras su retraso `--d`. Con movimiento reducido no se
+  anima y la escena se ve terminada.
+*/
+.pr-on .pr-rise { animation: pr-rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) var(--d, 0s) both; }
+.pr-on .pr-pop { animation: pr-pop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) var(--d, 0s) both; }
+.pr-on .pr-grow { animation: pr-grow 0.5s cubic-bezier(0.22, 1, 0.36, 1) var(--d, 0s) both; transform-origin: 0 50%; }
+.pr-on .pr-draw { animation: pr-draw 0.8s ease-out var(--d, 0s) both; }
+.pr-on .pr-blink { animation: pr-blink 1s steps(2, start) infinite; }
+.pr-on .pr-ring { animation: pr-ring 2s ease-out infinite; }
+.pr-on .pr-sweep { animation: pr-sweep 2.4s ease-in-out both; }
+.pr-on .pr-dim { animation: pr-dim 0.5s ease var(--d, 0s) both; }
+.pr-on .pr-choose { animation: pr-choose 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) var(--d, 0s) both; }
+.pr-on .pr-typing { animation: pr-typing var(--t, 1.4s) linear var(--d, 0s) both; }
+.pr-on .pr-type { animation: pr-type 1s steps(14) var(--d, 0s) both; }
+.pr-on .pr-press { animation: pr-press 0.5s ease var(--d, 0s) both; }
+.pr-on .pr-fill { animation: pr-grow var(--t, 1.4s) ease-in-out var(--d, 0s) both; }
+.pr-on .pr-burst { animation: pr-burst 0.9s ease-out var(--d, 0s) both; }
+.pr-on .pr-tick { animation: pr-tick 0.4s ease var(--d, 0s) both; }
+.pr-on .pr-fadein { animation: pr-fadein 0.4s ease var(--d, 0s) both; }
+.pr-on .pr-fadeout { animation: pr-fadeout 0.3s ease var(--d, 0s) both; }
+.pr-fadein { opacity: 1; }
+.pr-fadeout { opacity: 0; }
+
+@keyframes pr-rise { from { opacity: 0; transform: translateY(14px); } }
+@keyframes pr-pop { from { opacity: 0; transform: scale(0.6); } }
+@keyframes pr-grow { from { transform: scaleX(0); } }
+@keyframes pr-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes pr-blink { 50% { opacity: 0; } }
+@keyframes pr-ring { from { transform: scale(1); opacity: 0.55; } to { transform: scale(2); opacity: 0; } }
+@keyframes pr-sweep {
+  from { transform: rotate(-120deg); opacity: 1; }
+  80% { opacity: 1; }
+  to { transform: rotate(420deg); opacity: 0; }
+}
+@keyframes pr-dim { from { opacity: 1; } }
+@keyframes pr-choose { from { scale: 1; background-color: #fff; color: var(--color-brand-600); } }
+@keyframes pr-typing { 0% { opacity: 0; } 8%, 92% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes pr-type { from { width: 0; } }
+@keyframes pr-press { 40% { transform: scale(0.9); } }
+@keyframes pr-burst {
+  from { transform: translate(0, 0) scale(1); opacity: 1; }
+  to {
+    transform: translate(calc(cos(var(--a)) * 4rem), calc(sin(var(--a)) * 4rem)) scale(0.2);
+    opacity: 0;
+  }
+}
+@keyframes pr-tick { from { color: var(--color-muted); } }
+@keyframes pr-fadein { from { opacity: 0; } }
+@keyframes pr-fadeout { from { opacity: 1; } to { opacity: 0; } }
+
+/* Aparición al hacer scroll (componente <Reveal/>): lenta y suave, una sola vez. */
 @keyframes reveal-up {
-  from { opacity: 0; transform: translateY(14px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(36px); filter: blur(6px); }
+  to   { opacity: 1; transform: none; filter: none; }
+}
+@keyframes reveal-left {
+  from { opacity: 0; transform: translateX(-48px); filter: blur(6px); }
+  to   { opacity: 1; transform: none; filter: none; }
+}
+@keyframes reveal-right {
+  from { opacity: 0; transform: translateX(48px); filter: blur(6px); }
+  to   { opacity: 1; transform: none; filter: none; }
+}
+@keyframes reveal-zoom {
+  from { opacity: 0; transform: translateY(24px) scale(0.93); filter: blur(6px); }
+  to   { opacity: 1; transform: none; filter: none; }
 }
 .reveal { opacity: 0; }
-.reveal.is-visible { opacity: 1; animation: reveal-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.reveal.is-visible { opacity: 1; animation: reveal-up 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) both; }
+.reveal--left.is-visible { animation-name: reveal-left; }
+.reveal--right.is-visible { animation-name: reveal-right; }
+.reveal--zoom.is-visible { animation-name: reveal-zoom; }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .reveal, .reveal.is-visible { opacity: 1; animation: none; }
-  .float-slow, .wa-pulse, .type-row, .type-row .type-check { animation: none; }
-  .mock-animated .mock-piece, .mock-animated .mock-marker { animation: none; }
+  .float-slow, .wa-pulse, .type-row, .type-row .type-check { animation: none; }  .mock-animated .mock-piece, .mock-animated .mock-marker { animation: none; }
   .site-bg-soft { animation: none; }
+  .underline-draw, .scroll-progress { animation: none; }
+  .pr-scene * { animation: none !important; }
+  details::details-content { transition: none; }
   .type-row:first-child { background-color: var(--color-brand-50); color: var(--color-navy); }
   .type-row:first-child .type-check { opacity: 1; }
   .card-hover:hover { transform: none; }

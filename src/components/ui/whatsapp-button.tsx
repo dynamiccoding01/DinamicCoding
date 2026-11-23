@@ -5,7 +5,7 @@ import { whatsappUrl } from "@/lib/contact";
 /** Botón que abre un chat de WhatsApp con un mensaje ya escrito. */
 export function WhatsAppButton({
   message,
-  children = "Cotiza tu página web",
+  children = "Contáctanos",
   size = "lg",
   variant = "primary",
   className,

@@ -1,7 +1,6 @@
 import { Hero } from "@/components/sections/hero";
-import { Audiences } from "@/components/sections/audiences";
 import { ServiceTypes } from "@/components/sections/service-types";
-import { Guide } from "@/components/sections/guide";
+import { Advisory } from "@/components/sections/advisory";
 import { FeaturedProjects } from "@/components/sections/featured-projects";
 import { Process } from "@/components/sections/process";
 import { About } from "@/components/sections/about";
@@ -15,9 +14,8 @@ export default function HomePage() {
   return (
     <>
       <Hero />
-      <Audiences />
       <ServiceTypes />
-      <Guide />
+      <Advisory />
       <FeaturedProjects />
       <Process />
       <About />

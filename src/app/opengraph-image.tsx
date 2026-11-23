@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { contact } from "@/lib/contact";
 
-export const alt = "Dynamic Coding — No todas las páginas web son lo mismo";
+export const alt = "Dynamic Coding — Soluciones digitales a la medida de tu negocio";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -60,10 +60,9 @@ export default async function OpengraphImage() {
                 color: "#083189",
               }}
             >
-              <span>No todas las páginas</span>
+              <span>Soluciones digitales</span>
               <span style={{ display: "flex" }}>
-                web son
-                <span style={{ color: "#0274d7", marginLeft: 20 }}>lo mismo</span>
+                <span style={{ color: "#0274d7" }}>a tu medida</span>
               </span>
             </div>
             <div
@@ -77,15 +76,12 @@ export default async function OpengraphImage() {
                 color: "#37445a",
               }}
             >
-              Te asesoramos y desarrollamos la que tu negocio necesita.
+              Te asesoramos y desarrollamos lo que tu negocio necesita.
             </div>
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", color: "#083189" }}>
             <span style={{ fontSize: 30 }}>WhatsApp {contact.whatsappDisplay}</span>
-            <span style={{ marginTop: 6, fontSize: 22, color: "#5b6b82" }}>
-              {contact.city}
-            </span>
           </div>
         </div>
 

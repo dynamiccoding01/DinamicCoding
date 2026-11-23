@@ -1227,7 +1227,7 @@ begin
      array['Filtros por público y por marca', 'Variantes de color en cada modelo', 'Favoritos, carrito y pedidos', 'Consulta directa de cada producto'],
      true, 1, '/images/proyectos/activa-sport.png'),
 
-    ('catalogo-fernandez', 'Catálogo Fernández',
+    ('catalogo-fernandez', 'Fernández',
      'Catálogo digital de calzado deportivo para venta por docena y media docena.',
      'Catálogo digital de calzado deportivo orientado a la venta por mayor. Destaca en portada los nuevos ingresos de la temporada y permite recorrer todos los modelos desde el celular, con acceso directo a las redes del negocio.',
      'Catálogo digital', 'Fernández',
@@ -1242,7 +1242,7 @@ begin
      'Asesoro y desarrollo páginas web a la medida de cada negocio.',
      'Fundador de Dynamic Coding. Acompaña a cada cliente desde la primera asesoría hasta la publicación de su página web.',
      array['Páginas web', 'Tiendas online', 'Asesoría'],
-     'Santa Cruz de la Sierra, Bolivia', true, true, 1);
+     null, true, true, 1);
 end
 $inicio$;
 

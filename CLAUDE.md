@@ -6,13 +6,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 # Dynamic Coding — sitio público
 
-Sitio de Dynamic Coding / «DC Consultores · Asesoría y Consultoría» (Santa
-Cruz de la Sierra, Bolivia). Su mensaje central es «No todas las páginas web
-son lo mismo»: asesora al cliente y desarrolla uno de siete tipos de página.
+Sitio de Dynamic Coding / «DC Consultores · Asesoría y Consultoría». Su
+mensaje central es «Soluciones digitales a la medida de tu negocio»: asesora
+al cliente y desarrolla soluciones a medida (siete tipos: seis de página web
+y uno de aplicaciones y sistemas). «Página web» es un servicio, no el nombre
+de todo lo que hacen.
 Los clientes nunca se registran; el canal principal de contacto es WhatsApp.
 
-Rutas: inicio, `/servicios`, `/proyectos` y `/equipo` (cada una con su detalle
-`[slug]`), `/equipo/[slug]/cv` (CV en PDF) y `/contacto`. Next.js 16 (App Router, Turbopack) + React 19 +
+Es una sola landing (`/`): servicios, proyectos y contacto son secciones con
+ancla (`#servicios`, `#proyectos`, `#contacto`) a las que enlaza la barra. Las
+páginas `/servicios`, `/proyectos`, `/equipo` y `/contacto` (y el CV en PDF)
+se eliminaron; lo que dice más abajo sobre ellas, el formulario de consultas y
+el equipo es histórico y la capa de datos (`data.ts`) conserva esas lecturas
+sin uso. Next.js 16 (App Router, Turbopack) + React 19 +
 TypeScript + Tailwind v4 + Supabase + lucide-react. Desplegado en Vercel.
 
 Todo el contenido, la UI y los comentarios del código están en español.
@@ -45,7 +51,7 @@ teléfonos, correos). Lo que no se sabe se omite y se le pregunta al dueño.
 - `src/lib/contact.ts` — WhatsApp, ciudad y `whatsappUrl(mensaje)`. Todo
   enlace a WhatsApp sale de ahí (`<WhatsAppButton>`, `<WhatsAppFab>`).
 - `src/lib/seed.ts` — proyectos y personas reales con los que arranca el
-  sitio (Activa Sport, Catálogo Fernández, el fundador).
+  sitio (Activa Sport, Fernández, el fundador).
 - Un proyecto se asocia a un tipo de página cuando `project.category`
   (`portafolio.categoria`) es igual, letra por letra, al `title` del tipo: así
   aparece en `/servicios/[slug]` y su detalle enlaza al tipo. Cambiar un
@@ -229,9 +235,17 @@ revisar en el navegador lo que cambie a la vista.
   `.mock-piece`/`.mock-marker` (maquetas) y `.site-bg-soft` (fondo). Toda
   animación nueva debe
   desactivarse en el bloque `prefers-reduced-motion` del final.
-- `<Reveal>` (`src/components/ui/reveal.tsx`): `.reveal.is-visible` debe
-  mantener `opacity: 1` explícito (no solo vía la animación) y el fallback de
-  800 ms, o el contenido queda invisible en pestañas en segundo plano.
+- `<Reveal>` (`src/components/ui/reveal.tsx`): aparece una sola vez al entrar
+  en el viewport (`variant`: `up`, `left`, `right`, `zoom`; `delay` en ms para
+  escalonar). `.reveal.is-visible` debe mantener `opacity: 1` explícito (no
+  solo vía la animación). No hay temporizador de seguridad que lo muestre
+  antes de tiempo (si lo hubiera, lo que está más abajo ya habría hecho su
+  animación al cargar); solo sin `IntersectionObserver` se muestra de inmediato.
+  Para ver una sección en una captura hay que desplazarse hasta ella.
+- «Cómo trabajamos» (`process.tsx` + `process-scenes.tsx`): en `lg` la escena
+  queda fija (`sticky`) durante ~400svh y el scroll define el paso; no meter un
+  `overflow` en sus contenedores padre o se rompe el sticky. Las animaciones de
+  cada escena son clases `.pr-*` de `globals.css` (activas con `.pr-on`).
 - ESLint incluye `react-hooks/set-state-in-effect`: no llamar `setState` de
   forma síncrona dentro de un `useEffect` (usar callbacks, timers o rAF).
 - Logo: `public/brand/logo-dc.png` (monograma) y `logo-dynamic-coding.png`

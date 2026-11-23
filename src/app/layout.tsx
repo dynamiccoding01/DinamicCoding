@@ -18,9 +18,9 @@ const archivo = Archivo({
   weight: ["600", "700", "800", "900"],
 });
 
-const title = "Dynamic Coding — Páginas web a la medida de tu negocio";
+const title = "Dynamic Coding — Páginas web, apps y sistemas a medida";
 const description =
-  "Asesoría y desarrollo de páginas web en Santa Cruz de la Sierra, Bolivia: landing pages, páginas corporativas, catálogos digitales, tiendas online, reservas y soluciones a medida.";
+  "Asesoría y desarrollo de páginas web, aplicaciones móviles y sistemas de gestión a medida: landing pages, páginas corporativas, catálogos digitales, tiendas online, reservas y soluciones a medida.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -32,12 +32,13 @@ export const metadata: Metadata = {
   keywords: [
     "páginas web",
     "diseño de páginas web",
+    "aplicaciones móviles",
+    "sistemas de gestión",
+    "desarrollo de software a medida",
     "tienda online",
     "catálogo digital",
     "landing page",
     "asesoría y consultoría",
-    "Santa Cruz de la Sierra",
-    "Bolivia",
     "Dynamic Coding",
     "DC Consultores",
   ],
@@ -45,7 +46,7 @@ export const metadata: Metadata = {
     title,
     description,
     type: "website",
-    locale: "es_BO",
+    locale: "es_LA",
     siteName: "Dynamic Coding",
   },
   twitter: {
@@ -62,6 +63,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${inter.variable} ${archivo.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-surface">
+        <div aria-hidden className="scroll-progress no-print" />
         <SiteBackground />
         <Navbar />
         <main className="flex-1">{children}</main>

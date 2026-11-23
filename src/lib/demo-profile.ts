@@ -26,7 +26,7 @@ export const demoMember: TeamMember = {
     "Asesoría",
     "Diseño de interfaces",
   ],
-  location: "Santa Cruz de la Sierra, Bolivia",
+  location: null,
   years_experience: 5,
   available: true,
   experience: [

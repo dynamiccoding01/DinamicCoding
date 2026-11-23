@@ -10,7 +10,8 @@ import {
 } from "lucide-react";
 
 /**
- * Catálogo de la empresa: los siete tipos de página web de sus piezas
+ * Catálogo de la empresa: los siete tipos de solución (seis de página web y
+ * uno de aplicaciones y sistemas) de sus piezas
  * gráficas. Es contenido fijo del sitio (no viene de Supabase).
  */
 export interface ServiceType {
@@ -157,7 +158,7 @@ export const serviceTypes: ServiceType[] = [
   },
   {
     slug: "pagina-web-personalizada",
-    title: "Página web personalizada",
+    title: "Aplicaciones y sistemas a medida",
     Icon: Puzzle,
     description:
       "Una solución desarrollada a medida según las necesidades específicas de tu negocio, proyecto o empresa.",
