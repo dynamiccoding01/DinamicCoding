@@ -60,7 +60,7 @@ export function Reveal({
         visible && "is-visible",
         className,
       )}
-      style={{ animationDelay: `${delay}ms` }}
+      style={{ animationDelay: `${Math.round(delay * 0.55)}ms` }}
     >
       {children}
     </div>
