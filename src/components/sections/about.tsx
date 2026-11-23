@@ -22,7 +22,7 @@ export function About() {
         </Reveal>
 
         <Reveal variant="right" delay={200}>
-          <Eyebrow>Quiénes somos</Eyebrow>
+          <Eyebrow>¿Quiénes somos?</Eyebrow>
           <h2 className="mt-3 text-balance font-display text-3xl font-extrabold tracking-tight text-navy sm:text-4xl">
             Te asesoramos antes de construir
           </h2>

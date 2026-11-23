@@ -113,7 +113,7 @@ export function Process() {
           <div>
             <SectionHeading
               align="left"
-              eyebrow="Cómo trabajamos"
+              eyebrow="¿Cómo trabajamos?"
               title="De la idea a tu proyecto, en cuatro pasos"
             />
             <p className="mt-5 hidden text-sm font-semibold text-brand-600 lg:block">

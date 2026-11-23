@@ -32,7 +32,7 @@ export function Advisory() {
     <section className="py-14 sm:py-24 lg:flex lg:fill-screen lg:items-center">
       <Container className="grid items-center gap-12 lg:max-w-360 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16 lg:px-14">
         <Reveal>
-          <Eyebrow>Por qué elegirnos</Eyebrow>
+          <Eyebrow>¿Por qué elegirnos?</Eyebrow>
           <h2 className="mt-3 text-balance font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-navy sm:text-5xl lg:text-[3.4rem]">
             Una solución pensada para tu negocio
           </h2>

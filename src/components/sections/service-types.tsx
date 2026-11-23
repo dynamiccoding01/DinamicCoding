@@ -23,7 +23,7 @@ export function ServiceTypes() {
     >
       <Container className="lg:max-w-360 lg:px-14">
         <SectionHeading
-          eyebrow="Qué desarrollamos"
+          eyebrow="¿Qué desarrollamos?"
           title="Una solución para cada objetivo"
           subtitle="Cada negocio necesita algo distinto. Elige lo que se ajusta a lo que quieres lograr; te asesoramos antes de cotizar."
         />
