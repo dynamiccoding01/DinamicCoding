@@ -236,7 +236,10 @@ revisar en el navegador lo que cambie a la vista.
   forma síncrona dentro de un `useEffect` (usar callbacks, timers o rAF).
 - Logo: `public/brand/logo-dc.png` (monograma) y `logo-dynamic-coding.png`
   (completo), PNG transparentes generados desde el JPG que entregó el dueño
-  (no hay vectorial). Es azul: sobre fondo oscuro no contrasta, así que el
+  (no hay vectorial original; el monograma calcado a SVG está en
+  `docs/prompt-firma-dynamic-coding.md`, el prompt para poner la firma
+  «Desarrollado por Dynamic Coding» en los sitios de clientes). Es azul: sobre
+  fondo oscuro no contrasta, así que el
   logo siempre va sobre superficies claras. `src/app/icon.png` y
   `apple-icon.png` salen del monograma; `opengraph-image.tsx` lee el PNG del
   disco.
